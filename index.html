@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="bar">
+    <div id="ar-1" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+    <div id="ar-2" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+    <div id="ar-3" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+    <div id="ar-4" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+    <div id="ar-5" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+    <div id="ar-6" class="grid-item">
+        <div class="photo"><span class="name"></span></div>
+        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
+    </div>
+</div>
+<div class="kr"></div>
+<div class="ch"></div>
+</body>
+<script>
+const stopAt = [
+    [10000, 20000, 1, 'Mirani', [
+        {s: 10000, e: 2, k: '바뀔 시간이 됐어, we go up with party', c: '乾坤逆转，在狂欢中扶摇直上'},
+        {s: 1, e: 4, k: '벌어 cash, fame, 이젠 이뤄 내 자리', c: '名利双收，如今终于入室登堂'},
+        {s: 1, e: 4, k: 'My way, 봐, 허덕이다 하늘까지', c: '看我从泥潭挣扎一路冲向云霄'},
+        {s: 1, e: 4, k: '얼어붙은 삶을 바꿔', c: '打破冰封的宿命'},
+        {s: 1, e: 4, k: '더이상 더이상 떨지 않지', c: '再不寒冷，再无彷徨'},
+    ], '', ''],
+    [20150, 29150, 2, 'pH-1', [
+        {s: 10000, e: 2, k: 'I got the win', c: '我凯旋归来，气宇轩昂'},
+        {s: 1, e: 4, k: '나를 더 믿어, 하늘에 빌어', c: '双手合十，向天祈祷'},
+        {s: 1, e: 4, k: '안보여 뒤', c: '一往无前，从不回望'},
+        {s: 1, e: 4, k: '부셔 백미러, I\'ma hop out the beamer', c: '砸碎后视镜，跃出BMW'},
+        {s: 1, e: 4, k: '사계절 winter on my body, achoo', c: '一年四季，身上挂满金银珠宝，achoo'},
+        {s: 1, e: 4, k: 'Winter on my body, achoo', c: '身上挂满金银珠宝，achoo'},
+    ], '', ''],
+    [32100, 39880, 3, 'Munchman'],
+    [32100, 39880, 1, 'Mirani'],
+    [32100, 39880, 2, 'pH-1'],
+    [32100, 39880, 4, 'Skinny Brown'],
+    [32100, 39880, 5, 'YDP Louie'],
+    [32100, 39880, 6, 'Leellamarz'],
+    [32100, 39880, 1, 'Ourealgoat'],
+    [32100, 39880, 2, 'Dbo'],
+    [32100, 39880, 3, 'Sik-K'],
+    [32100, 39880, 4, 'pH-1'],
+    [32100, 39880, 5, 'Owen'],
+    [32100, 39880, 6, 'Kid Milli'],
+    [32100, 39880, 1, 'Swings'],
+    [32100, 39880, 2, 'Nudeboi Seo'],
+    [32100, 39880, 3, 'TRADE L'],
+    [32100, 39880, 4, 'Coogie'],
+    [32100, 39880, 5, 'Blase'],
+    [32100, 39880, 6, 'sokodomo'],
+    [32100, 39880, 1, 'Khundi Panda'],
+    [32100, 39880, 2, 'Lil Moshpit'],
+    [32100, 39880, 3, 'Khakii'],
+    [32100, 39880, 4, 'JUSTHIS'],
+    [32100, 39880, 5, 'Mirani'],
+    [32100, 39880, 6, 'pH-1'],
+]
+const remainedIndexSet = new Set()
+stopAt.forEach((item, index) => remainedIndexSet.add(index))
+const durationMap = new Map()
+let current = 0, currentIndex = 0;
+
+const INTERVAL = 20, TOTAL_MAX_TIME = (11 * 60 + 29) * 1000, CYCLE = 6;
+const animation = setInterval(() => {
+    if (remainedIndexSet.size === 0) {
+        clearInterval(animation);
+        console.log('动画执行完毕，实际累计结果：', durationMap);
+        return;
+    }
+    const removeList = []
+    remainedIndexSet.forEach(_index => {
+        const infos = stopAt[_index]
+        const start = infos[0], end = infos[1], position = infos[2], key = infos[3];
+        if (current >= start && current <= end) {
+            let duration = durationMap.get(key) || 0
+            duration += INTERVAL
+            durationMap.set(key, duration);
+            if (position === 1) renderPhoto(_index)
+            render('ar-' + position, true, { sec: (duration / 1000).toFixed(1) + 's', per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) + '%' })
+        }
+        else if (current > end) {
+            removeList.push(_index)
+        }
+        else if (current < stopAt[0][0]) {
+            renderPhoto(0)
+        }
+    })
+    removeList.forEach(_index => remainedIndexSet.delete(_index))
+    current += INTERVAL;
+}, INTERVAL)
+const renderPhoto = (index) => {
+    while (1) {
+        const infos = stopAt[index];
+        const position = infos[2], key = infos[3];
+        const el = document.getElementById('ar-' + position);
+        const nameNode = el.querySelector('.name')
+        nameNode.textContent = key
+        if (index++ >= stopAt.length || position === CYCLE) {
+            break;
+        }
+    }
+}
+const render = (id, isShow, data = {}) => {
+    const el = document.getElementById(id);
+    if (!el) return; // 容错处理：找不到元素直接返回
+    // 1. 控制显隐
+    el.style.display = isShow ? '' : 'none'; // '' 表示恢复 CSS 中默认的布局方式(如 flex/grid)
+    // 2. 如果显示且传入了数据，则更新子元素
+    if (isShow) {
+        if (data.sec !== undefined) {
+            const secNode = el.querySelector('.sec');
+            if (secNode) secNode.textContent = data.sec;
+        }
+        if (data.per !== undefined) {
+            const perNode = el.querySelector('.per');
+            if (perNode) perNode.textContent = data.per;
+        }
+    }
+}
+</script>
+<style>
+html, body {
+    margin: 0;
+    height: 100%;
+}
+body {
+    position: relative; /* 核心：作为子元素定位的基准 */
+}
+.bar {
+    width: 100vw;
+    position: absolute;
+    display: flex;
+    top: 0;
+}
+.bar .grid-item {
+    flex: 1;
+}
+.grid-item .photo {
+    background: aqua;
+    height: 300px;
+    position: relative;
+}
+.grid-item .photo .name {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    font-size: 30px; font-weight: bold;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+.grid-item .countdown {
+    height: 50px;
+    background-color: #000;
+    display: flex; align-items: center; justify-content: center; gap: 30px;
+    font-size: 22px; font-weight: bold;
+    color: #fff;
+}
+.countdown .sec {
+}
+.countdown .per {
+}
+</style>
+</html>
