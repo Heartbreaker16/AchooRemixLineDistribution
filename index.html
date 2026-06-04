@@ -31,26 +31,15 @@
         <div class="countdown"><span class="sec"></span><span class="per"></span></div>
     </div>
 </div>
-<div class="kr"></div>
-<div class="ch"></div>
+
+<div class="rolling-lyrics" id="lyrics-container">
+</div>
+
 </body>
 <script>
 const stopAt = [
-    [10000, 20000, 1, 'Mirani', [
-        {s: 10000, e: 2, k: '바뀔 시간이 됐어, we go up with party', c: '乾坤逆转，在狂欢中扶摇直上'},
-        {s: 1, e: 4, k: '벌어 cash, fame, 이젠 이뤄 내 자리', c: '名利双收，如今终于入室登堂'},
-        {s: 1, e: 4, k: 'My way, 봐, 허덕이다 하늘까지', c: '看我从泥潭挣扎一路冲向云霄'},
-        {s: 1, e: 4, k: '얼어붙은 삶을 바꿔', c: '打破冰封的宿命'},
-        {s: 1, e: 4, k: '더이상 더이상 떨지 않지', c: '再不寒冷，再无彷徨'},
-    ], '', ''],
-    [20150, 29150, 2, 'pH-1', [
-        {s: 10000, e: 2, k: 'I got the win', c: '我凯旋归来，气宇轩昂'},
-        {s: 1, e: 4, k: '나를 더 믿어, 하늘에 빌어', c: '双手合十，向天祈祷'},
-        {s: 1, e: 4, k: '안보여 뒤', c: '一往无前，从不回望'},
-        {s: 1, e: 4, k: '부셔 백미러, I\'ma hop out the beamer', c: '砸碎后视镜，跃出BMW'},
-        {s: 1, e: 4, k: '사계절 winter on my body, achoo', c: '一年四季，身上挂满金银珠宝，achoo'},
-        {s: 1, e: 4, k: 'Winter on my body, achoo', c: '身上挂满金银珠宝，achoo'},
-    ], '', ''],
+    [10000, 20000, 1, 'Mirani', '', ''],
+    [20150, 29150, 2, 'pH-1', '', ''],
     [32100, 39880, 3, 'Munchman'],
     [32100, 39880, 1, 'Mirani'],
     [32100, 39880, 2, 'pH-1'],
@@ -75,6 +64,15 @@ const stopAt = [
     [32100, 39880, 4, 'JUSTHIS'],
     [32100, 39880, 5, 'Mirani'],
     [32100, 39880, 6, 'pH-1'],
+], lyricList = [
+    { s: 2000, e: 5000, k: 'La La La La La La La', c: '', isolated: true },
+    { s: 7000, e: 8500, k: 'Groovy everywhere', c: '', isolated: true },
+    { s: 9550, e: 11000, k: '바뀔 시간이 됐어, we go up with party', c: '扭转乾坤，狂欢中扶摇直上', isolated: true },
+    { s: 12000, e: 15000, k: '벌어 cash, fame, 이젠 이뤄 내 자리', c: '名利双收，如今我步入殿堂' },
+    { s: 16000, e: 17040, k: 'My way, 봐, 허덕이다 하늘까지', c: '看我从泥潭挣扎一路冲向云霄' },
+    { s: 17940, e: 18500, k: '얼어붙은 삶을 바꿔', c: '打破冰封的宿命' },
+    { s: 18500 , e: 19000, k: '더이상 더이상 떨지 않지', c: '再不寒冷，再无彷徨' },
+    { s: 20500 , e: 21000, k: 'I got the win', c: '我凯旋归来，气宇轩昂', isolated: true  },
 ]
 const remainedIndexSet = new Set()
 stopAt.forEach((item, index) => remainedIndexSet.add(index))
@@ -82,19 +80,21 @@ const durationMap = new Map()
 let current = 0, currentIndex = 0;
 
 const INTERVAL = 20, TOTAL_MAX_TIME = (11 * 60 + 29) * 1000, CYCLE = 6;
-const animation = setInterval(() => {
+let lastTime = performance.now(); // 记录上一次执行的高精度时间戳
+const animationLoop = (timestamp) => {
     if (remainedIndexSet.size === 0) {
-        clearInterval(animation);
         console.log('动画执行完毕，实际累计结果：', durationMap);
         return;
     }
+    const dt = timestamp - lastTime;
+    lastTime = timestamp;
     const removeList = []
     remainedIndexSet.forEach(_index => {
         const infos = stopAt[_index]
         const start = infos[0], end = infos[1], position = infos[2], key = infos[3];
         if (current >= start && current <= end) {
             let duration = durationMap.get(key) || 0
-            duration += INTERVAL
+            duration += dt
             durationMap.set(key, duration);
             if (position === 1) renderPhoto(_index)
             render('ar-' + position, true, { sec: (duration / 1000).toFixed(1) + 's', per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) + '%' })
@@ -106,9 +106,11 @@ const animation = setInterval(() => {
             renderPhoto(0)
         }
     })
+    renderLyrics(current)
     removeList.forEach(_index => remainedIndexSet.delete(_index))
-    current += INTERVAL;
-}, INTERVAL)
+    current += dt;
+    requestAnimationFrame(animationLoop);
+}
 const renderPhoto = (index) => {
     while (1) {
         const infos = stopAt[index];
@@ -138,7 +140,109 @@ const render = (id, isShow, data = {}) => {
         }
     }
 }
+
+const container = document.getElementById('lyrics-container');
+const LINE_HEIGHT = 90; // 每一行滚动的基础高度偏移量
+
+// 1. 初始化阶段：一次性生成所有 DOM 节点，并保存引用
+const domNodes = lyricList.map((lyric) => {
+    const el = document.createElement('div');
+    el.className = 'lyric-line';
+    el.innerHTML = `
+        <div class="kr lyric-text">${lyric.k}</div>
+        <div class="ch lyric-text">${lyric.c}</div>
+    `;
+    // 初始状态隐藏在视口下方
+    el.style.transform = `translateY(${LINE_HEIGHT * 2}px)`;
+    container.appendChild(el);
+    return el;
+});
+
+// 全局记录当前激活的歌词索引，用于判断是否需要触发排版动画
+let activeIndex = -1;
+// 2. 核心渲染函数 (请在 requestAnimationFrame 或你的播放器 timeupdate 中调用)
+const renderLyrics = (current) => {
+    // 【阶段 A】：寻找当前应该居中的歌词索引
+    let newActiveIndex = -1;
+    // 倒序遍历：找到最后一个 startTime <= current 的歌词
+    for (let i = lyricList.length - 1; i >= 0; i--) {
+        if (current >= lyricList[i].s) {
+            newActiveIndex = i;
+            break;
+        }
+    }
+
+    // 【阶段 B】：如果居中歌词发生切换，触发排版和动画
+    if (newActiveIndex !== activeIndex) {
+        const isNewIsolated = lyricList[newActiveIndex]?.isolated;
+
+        lyricList.forEach((lyric, i) => {
+            const node = domNodes[i];
+            let targetY = 0;
+            let targetOpacity = 0;
+
+            if (isNewIsolated) {
+                // 处理 Isolated: true 的特殊逻辑
+                if (i === newActiveIndex) {
+                    targetY = 0;
+                    targetOpacity = 1;
+                    // 【细节优化】如果它是凭空出现的，取消它的滑动过程，强制在原地渐入
+                    if (node.style.opacity === '0' || node.style.opacity === '') {
+                        node.style.transition = 'none'; // 暂禁动画
+                        node.style.transform = 'translateY(0px)';
+                        void node.offsetWidth; // 触发浏览器重排，使 translateY(0) 立即生效
+                        node.style.transition = ''; // 恢复动画
+                    }
+                } else {
+                    // 其他所有歌词：【原地渐出消失】
+                    // 核心：不要修改 targetY (不更新 transform)，只把 opacity 设为 0
+                    node.style.opacity = '0';
+                    node.classList.remove('is-center');
+                    return; // 跳过下方的 transform 设置
+                }
+            } else {
+                // 处理正常滚动逻辑
+                const offset = i - newActiveIndex;
+                targetY = offset * LINE_HEIGHT;
+
+                if (offset === 0) { // 正在唱的
+                    targetOpacity = 1;
+                } else if (offset === -1) { // 上一句
+                    targetOpacity = 0.3;
+                } else if (offset === 1) { // 下一句
+                    // 【特殊处理】：如果下一句是 isolated，它“永远不能出现在第三行”
+                    targetOpacity = lyricList[i].isolated ? 0 : 0.3;
+                } else { // 视口之外
+                    targetOpacity = 0;
+                }
+            }
+
+            // 应用计算后的排版样式
+            node.style.transform = `translateY(${targetY}px)`;
+            node.style.opacity = targetOpacity;
+            node.classList.toggle('is-center', i === newActiveIndex);
+        });
+
+        activeIndex = newActiveIndex; // 更新全局状态
+    }
+
+    // 【阶段 C】：计算并更新卡拉OK进度
+    if (activeIndex !== -1) {
+        const line = lyricList[activeIndex];
+        let p = 0;
+        if (current >= line.s && current <= line.e) {
+            p = ((current - line.s) / (line.e - line.s)) * 100; // 计算百分比
+        } else if (current > line.e) {
+            p = 100; // 唱完了保持全满
+        }
+        // 通过 CSS 变量更新 UI
+        domNodes[activeIndex].style.setProperty('--p', `${p}%`);
+    }
+};
+
+requestAnimationFrame(animationLoop);
 </script>
+
 <style>
 html, body {
     margin: 0;
@@ -179,6 +283,53 @@ body {
 .countdown .sec {
 }
 .countdown .per {
+}
+/* 歌词主容器 */
+.rolling-lyrics {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    height: 300px; /* 控制可视区域高度，假设每行80px，正好显示3行 */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 上下边缘模糊渐隐效果 */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+}
+
+/* 单行歌词节点 (绝对定位) */
+.lyric-line {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    /*gap: 4px;*/
+    /* 核心：极其丝滑的动画过渡 */
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.4s ease,
+    scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    opacity: 0;
+    pointer-events: none;
+}
+/* 歌词文字与卡拉OK效果 */
+.lyric-text {
+    font-weight: 700;
+    /* 利用 CSS 变量 --p 配合硬分界渐变，实现从左到右的高亮填充 */
+    background: linear-gradient(to right, #1db954 var(--p, 0%), rgba(0, 0, 0, 0.4) var(--p, 0%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.lyric-text.kr { font-size: 20px; }
+.lyric-text.ch { font-size: 20px; font-weight: 500; }
+
+/* 正在演唱的中间行高亮放大 */
+.lyric-line.is-center { scale: 1.2; }
+.lyric-line.is-center .lyric-text {
+    background: linear-gradient(to right, #000000 var(--p, 0%), rgba(0, 0, 0, 0.4) var(--p, 0%));
+    -webkit-background-clip: text;
 }
 </style>
 </html>
