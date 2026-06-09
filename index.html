@@ -5,86 +5,57 @@
     <title>Title</title>
 </head>
 <body>
-<div class="bar" onclick="turnOn()">
-    <div id="ar-1" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-    <div id="ar-2" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-    <div id="ar-3" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-    <div id="ar-4" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-    <div id="ar-5" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-    <div id="ar-6" class="grid-item">
-        <div class="portrait"><span class="name"></span></div>
-        <div class="countdown"><span class="sec"></span><span class="per"></span></div>
-    </div>
-</div>
-
-<div class="rolling-lyrics" id="lyrics-container">
-</div>
+<div id="bar" onclick="turnOn()"></div>
+<div class="rolling-lyrics" id="lyrics-container"></div>
 <audio id="bg-master" src="music/Groovy%20Room%20-%20Achoo%20(Remix).mp3" muted preload="auto" loop></audio>
-
 </body>
 <script>
+const convertTime = (timeStr) => {
+    if (!timeStr) return 0;
+    const parts = timeStr.split(':');
+    const m = parseInt(parts[0], 10);
+    const sParts = parts[1].split('.');
+    const s = parseInt(sParts[0], 10);
+    const msStr = (sParts[1] || '0').padEnd(3, '0');
+    const ms = parseInt(msStr, 10);
+    return (m * 60 + s) * 1000 + ms;
+}
+
 const stopAt = [
-    // ['00:13:280', '00:27:280', 1, 'Mirani', 'mirani.jpg', '50% 5%', '160% auto'],
-    // ['00:27:280', '00:41:400', 2, 'pH-1', 'ph1.jpg', '50% 20%', '130% auto'],
-    // ['00:41:300', '01:22:140', 3, 'Munchman', 'munchman.jpg', '50% 10%', '210% auto'],
-    // ['01:21:900', '01:35:520', 1, 'Mirani', 'mirani.jpg', '50% 5%', '160% auto'],
-    // ['01:35:740', '01:49:280', 2, 'pH-1', 'ph1.jpg', '50% 20%', '130% auto'],
-    // ['01:49:200', '02:16:500', 4, 'Skinny Brown', 'SkinnyBrown.webp', '50% 5%', '100% auto'],
-    // ['02:16:500', '02:44:700', 5, 'YDP Louie', 'louie.jpg', '60% 13%', '180% auto'],
-    // ['02:44:280', '03:12:280', 6, 'Leellamarz', 'Leellamarz1.jpg', '0% 0%', '140% auto'],
-    ['03:11:580', '03:39:603', 1, 'Ourealgoat', 'Ourealgoat_1.webp', '50% 50%', '115% auto'],
-    ['03:39:600', '04:06:600', 2, 'Dbo', 'dbo.jpg', '50% 100%', '115% auto'],
-    ['04:06:665', '04:48:280', 3, 'Sik-K', 'Sik-K-3.webp', '50% 54%', '170% auto'],
-    ['04:48:000', '05:01:600', 4, 'pH-1', 'ph1.jpg', '50% 20%', '130% auto'],
-    ['05:01:500', '05:29:200', 5, 'Owen', 'owen.webp', '70% 50%', '115% auto'],
-    ['05:29:000', '05:56:800', 6, 'Kid Milli', 'KidMilli.webp', '50% 0%', '100% auto'],
-    ['05:58:800', '06:58:800', 1, 'Swings', 'swings.jpg', '50% 10%', '180% auto'],
-    ['05:58:800', '06:58:800', 2, 'Nudeboi Seo', 'Nudeboi_Seo_1.webp', '50% 0%', '113% auto'],
-    ['05:58:800', '06:58:800', 3, 'TRADE L', 'TRADE-L-01.jpg', '50% 70%', '100% auto'],
-    ['05:58:800', '06:58:800', 4, 'Coogie', 'coogie.webp', '50% 0%', '120% auto'],
-    ['05:58:800', '06:58:800', 5, 'Blase', 'Blase_1.webp', '50% 10%', '150% auto'],
-    ['05:58:800', '06:58:800', 6, 'sokodomo', 'sokodomo.webp', '50% 20%', '150% auto'],
-    ['05:58:800', '06:58:800', 1, 'Khundi Panda', 'KhundiPanda.jpg', '50% 50%', '100% auto'],
-    ['05:58:800', '06:58:800', 2, 'Lil Moshpit', 'Lil_moshpit_1.webp', '50% 10%', '250% auto'],
-    ['05:58:800', '06:58:800', 3, 'Khakii', 'Khakii.jpg', '50% 0%', '100% auto'],
-    ['05:58:800', '06:58:800', 4, 'JUSTHIS', 'justhis.webp', '50% 50%', '100% auto'],
-    ['05:58:800', '06:58:800', 5, 'Mirani', 'mirani.jpg', '50% 5%', '160% auto'],
-    ['05:58:800', '06:58:800', 6, 'pH-1', 'ph1.jpg', '50% 20%', '130% auto'],
-], lyricList = [
-    { s: 2000, e: 5000, k: 'La La La La La La La', c: '', isolated: true },
-    { s: 7000, e: 8500, k: 'Groovy everywhere', c: '', isolated: true },
-    { s: 9550, e: 11000, k: '바뀔 시간이 됐어, we go up with party', c: '扭转乾坤，狂欢中扶摇直上', isolated: true },
-    { s: 12000, e: 15000, k: '벌어 cash, fame, 이젠 이뤄 내 자리', c: '名利双收，如今我步入殿堂' },
-    { s: 16000, e: 17040, k: 'My way, 봐, 허덕이다 하늘까지', c: '看我从泥潭挣扎一路冲向云霄' },
-    { s: 17940, e: 18500, k: '얼어붙은 삶을 바꿔', c: '打破冰封的宿命' },
-    { s: 18500 , e: 19000, k: '더이상 더이상 떨지 않지', c: '再不寒冷，再无彷徨' },
-    { s: 20500 , e: 21000, k: 'I got the win', c: '我凯旋归来，气宇轩昂', isolated: true  },
-]
-const remainedIndexSet = new Set()
-const stopAtSize = stopAt.length
-// stopAt.forEach((item, index) => remainedIndexSet.add(index))
+    { s: '00:13.364', e: '00:26.952', position: 1, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
+    { s: '00:26.972', e: '00:40.675', position: 2, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
+    { s: '00:41.176', e: '01:21.383', position: 3, name: 'Munchman', portrait: 'munchman.jpg', bgPos: '50% 10%', bgSize: '210% auto', color: '#0233AA' },
+    { s: '01:21.961', e: '01:35.416', position: 1, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
+    { s: '01:35.464', e: '01:49.394', position: 2, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
+    { s: '01:49.714', e: '02:16.907', position: 4, name: 'Skinny Brown', portrait: 'SkinnyBrown.webp', bgPos: '50% 5%', bgSize: '100% auto', color: '#1794C2' },
+    { s: '02:17.376', e: '02:44.228', position: 5, name: 'YDP Louie', portrait: 'louie.jpg', bgPos: '60% 13%', bgSize: '180% auto', color: '#ff0000' },
+    { s: '02:44.620', e: '03:12.068', position: 6, name: 'Leellamarz', portrait: 'leellamarz.webp', bgPos: '50% 0%', bgSize: '110% auto', color: '#3A2975' },
+    { s: '03:12.124', e: '03:39.106', position: 1, name: 'Ourealgoat', portrait: 'Ourealgoat_1.webp', bgPos: '50% 50%', bgSize: '125% auto', color: '#800080' },
+    { s: '03:39.541', e: '04:06.265', position: 2, name: 'Dbo', portrait: 'dbo.jpg', bgPos: '50% 50%', bgSize: '125% auto', color: '#9E1313' },
+    { s: '04:06.708', e: '04:47.904', position: 3, name: 'Sik-K', portrait: 'Sik-K-3.webp', bgPos: '50% 54%', bgSize: '170% auto', color: '#2151d1' },
+    { s: '04:48.050', e: '05:01.215', position: 4, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
+    { s: '05:01.600', e: '05:29.214', position: 5, name: 'Owen', portrait: 'owen.jpg', bgPos: '38% 25%', bgSize: '340% auto', color: '#cc6600' },
+    { s: '05:29.256', e: '05:55.274', position: 6, name: 'Kid Milli', portrait: 'KidMilli.webp', bgPos: '50% 0%', bgSize: '100% auto', color: '#1B2452' },
+    { s: '05:56.548', e: '06:24.117', position: 1, name: 'Swings', portrait: 'swings.jpg', bgPos: '50% 10%', bgSize: '200% auto', color: '#00A752' },
+    { s: '06:24.253', e: '06:51.283', position: 2, name: 'Nudeboi Seo', portrait: 'Nudeboi_Seo_1.webp', bgPos: '90% 50%', bgSize: '122% auto', color: '#C27517' },
+    { s: '06:51.321', e: '07:18.814', position: 3, name: 'TRADE L', portrait: 'TRADE-L-01.jpg', bgPos: '50% 100%', bgSize: '100% auto', color: '#7295CF' },
+    { s: '07:18.854', e: '07:45.701', position: 4, name: 'Coogie', portrait: 'coogie2.jpg', bgPos: '30% 10%', bgSize: '160% auto', color: '#C87B64' },
+    { s: '07:46.013', e: '08:13.277', position: 5, name: 'Blase', portrait: 'blase.png', bgPos: '40% 0%', bgSize: '220% auto', color: '#555B5B' },
+    { s: '08:15.637', e: '08:40.843', position: 6, name: 'sokodomo', portrait: 'sokodomo.jpg', bgPos: '40% 0%', bgSize: '115% auto', color: '#690099' },
+    { s: '08:41.134', e: '09:08.840', position: 1, name: 'Khundi Panda', portrait: 'khundipanda2.jpg', bgPos: '100% 60%', bgSize: '150% auto', color: '#038183' },
+    { s: '09:09.169', e: '09:36.001', position: 2, name: 'Lil Moshpit', portrait: 'Lil_moshpit_1.webp', bgPos: '50% 10%', bgSize: '270% auto', color: '#1D002B' },
+    { s: '09:36.464', e: '10:03.042', position: 3, name: 'Khakii', portrait: 'Khakii.jpg', bgPos: '50% 0%', bgSize: '100% auto', color: '#296796' },
+    { s: '10:03.073', e: '10:57.701', position: 4, name: 'JUSTHIS', portrait: 'justhis.jpeg', bgPos: '50% 40%', bgSize: '220% auto', color: '#4B0082' },
+    { s: '10:57.757', e: '11:11.572', position: 5, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
+    { s: '11:11.604', e: '11:25.430', position: 6, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
+].map(_ => { _.s = convertTime(_.s); _.e = convertTime(_.e); return _; }), lyricList = []
+// console.log(stopAt)
+const startOfAll = stopAt[0].s, stopAtSize = stopAt.length
 const durationMap = new Map()
-let current = 0, currentIndex = 0, indexOfPosition1 = 0;
-let lastScanStart = 0, lastRenderPortraitAtIndexSet = new Set();
+let current = 0, indexOfPosition1 = 0;
 const audio = document.getElementById('bg-master');
 
 const TOTAL_MAX_TIME = (11 * 60 + 29) * 1000, CYCLE = 6;
-let lastTime = performance.now(); // 记录上一次执行的高精度时间戳
 const animationLoop = (timestamp) => {
 // 🌟 核心修复 1：直接读取音频当前的绝对精确播放位置（秒 * 1000 = 毫秒）
     const audioCurrentTime = audio.currentTime * 1000;
@@ -93,9 +64,6 @@ const animationLoop = (timestamp) => {
     const dt = audioCurrentTime - current;
     current = audioCurrentTime; // 将视觉时间轴与音频完全强绑定
 
-    // const removeList = []
-    const positionSet = new Set()
-    let startIndex = indexOfPosition1;
     if (current < startOfAll) {
         for (let j = 0; j < 8; j++) {
             renderPortrait(j, false)
@@ -103,16 +71,16 @@ const animationLoop = (timestamp) => {
     } else {
         let renderedLastPosition = false
         for (let i = indexOfPosition1; i < stopAtSize; i++) {
-            const infos = stopAt[i]
-            const start = convertTime(infos[0]), end = convertTime(infos[1]), position = infos[2], key = infos[3];
+            const { s, e, position, name } = stopAt[i]
+            const start = s, end = e
+            // console.log(current, start, end)
             if (renderedLastPosition) break;
-            // positionSet.add(position);
             if (current >= start && current <= end) {
-                let duration = durationMap.get(key) || 0
+                let duration = durationMap.get(name) || 0
                 duration += dt
-                durationMap.set(key, duration);
+                durationMap.set(name, duration);
                 renderPortrait(i, true)
-                render('ar-' + position, true, { sec: (duration / 1000).toFixed(1) + 's', per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) + '%' })
+                render('ar-' + position, true, { sec: (duration / 1000).toFixed(1), per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) })
                 if (position === CYCLE) {
                     renderedLastPosition = true
                 }
@@ -121,12 +89,8 @@ const animationLoop = (timestamp) => {
                 renderPortrait(i, false)
                 if (position === CYCLE) {
                     indexOfPosition1 = i + 1;
-                    render('ar-' + 1, true, {  })
-                    render('ar-' + 2, true, {  })
-                    render('ar-' + 3, true, {  })
-                    render('ar-' + 4, true, {  })
-                    render('ar-' + 5, true, {  })
-                    render('ar-' + 6, true, {  })
+                    for (let _ = 1; _ <=  CYCLE; _++)
+                        render('ar-' + _, true, {  })
                 }
             } else if (current < start) {
                 // break
@@ -138,35 +102,39 @@ const animationLoop = (timestamp) => {
         }
     }
     renderLyrics(current)
-    // removeList.forEach(_index => remainedIndexSet.delete(_index))
     requestAnimationFrame(animationLoop);
 }
 const index2Image = new Map(), index2Filter = new Map()
 const renderPortrait = (index, on) => {
-    const infos = stopAt[index];
-    const position = infos[2], key = infos[3], imgName = infos[4], crop = infos[5], scale = infos[6];
+    const { position, name, portrait, bgSize, bgPos, color } = stopAt[index];
     const el = document.getElementById('ar-' + position);
 
     const nameNode = el.querySelector('.name');
-    nameNode.textContent = key
+    nameNode.textContent = name
+    const countdownNode = el.querySelector('.countdown')
 
     const originImage = index2Image.get(index)
-    const newImage = `url('portrait/${imgName}')`
+    const newImage = `url('portrait/${portrait}')`
     const originGrayscale = index2Filter.get(index)
     const newGrayscale = on ? 'grayscale(0)' : 'grayscale(90%)'
     if (originImage !== newImage) {
         console.log(originImage, newImage)
         const portraitNode = el.querySelector('.portrait')
-        portraitNode.style.backgroundPosition = crop || '50% 50%';
-        portraitNode.style.backgroundSize = scale || 'cover';
+        portraitNode.style.backgroundPosition = bgPos || '50% 50%';
+        portraitNode.style.backgroundSize = bgSize || 'cover';
         portraitNode.style.filter = newGrayscale;
-        portraitNode.style.backgroundImage = `url('portrait/${imgName}')`;
+        portraitNode.style.backgroundImage = newImage
         index2Image.set(index, newImage);
         index2Filter.set(index, newGrayscale);
+        countdownNode.style.backgroundColor = color
+        countdownNode.style.filter = newGrayscale
+        el.classList.toggle('active', !!on);
     } else if (originGrayscale !== newGrayscale) {
         const portraitNode = el.querySelector('.portrait')
         portraitNode.style.filter = newGrayscale;
         index2Filter.set(index, newGrayscale);
+        el.classList.toggle('active', !!on);
+        countdownNode.style.filter = newGrayscale
     }
 }
 
@@ -177,29 +145,281 @@ const render = (id, isShow, data = {}) => {
     el.style.display = isShow ? '' : 'none'; // '' 表示恢复 CSS 中默认的布局方式(如 flex/grid)
     // 2. 如果显示且传入了数据，则更新子元素
     if (isShow) {
-        const secNode = el.querySelector('.sec');
-        if (secNode) secNode.textContent = data.sec || '';
-        const perNode = el.querySelector('.per');
-        if (perNode) perNode.textContent = data.per || '';
+        const secNode = el.querySelector('.sec-container');
+        if (secNode) {
+            secNode.querySelector('.value').textContent = data.sec || ''
+            secNode.querySelector('.unit').textContent = data.sec ? 's' : ''
+        }
+        const perNode = el.querySelector('.per-container');
+        if (perNode) {
+            perNode.querySelector('.value').textContent = data.per || ''
+            perNode.querySelector('.unit').textContent = data.per ? '%' : ''
+        }
     }
 }
 
 const container = document.getElementById('lyrics-container');
-const LINE_HEIGHT = 90; // 每一行滚动的基础高度偏移量
+const LINE_HEIGHT = 150; // 每一行滚动的基础高度偏移量
 
-// 1. 初始化阶段：一次性生成所有 DOM 节点，并保存引用
-const domNodes = lyricList.map((lyric) => {
-    const el = document.createElement('div');
-    el.className = 'lyric-line';
-    el.innerHTML = `
-        <div class="kr lyric-text">${lyric.k}</div>
-        <div class="ch lyric-text">${lyric.c}</div>
-    `;
-    // 初始状态隐藏在视口下方
-    el.style.transform = `translateY(${LINE_HEIGHT * 2}px)`;
-    container.appendChild(el);
-    return el;
-});
+const generateStageSlots = () => {
+    const barContainer = document.getElementById('bar');
+    if (!barContainer) return;
+
+    let htmlBuffer = '';
+
+    for (let i = 1; i <= CYCLE; i++) {
+        htmlBuffer += `
+            <div id="ar-${i}" class="grid-item">
+                <div class="portrait"><div class="name"></div></div>
+                <div class="countdown">
+                    <div class="sec-container">
+                        <div class="value"></div>
+                        <div class="unit"></div>
+                    </div>
+                    <div class="per-container">
+                        <div class="value"></div>
+                        <div class="unit"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    // 一次性注入，减少 DOM 树重排，性能最好
+    barContainer.innerHTML = htmlBuffer;
+};
+
+const shiftQrcTime = async (n) => {
+    // 1. 核心：高精度时间格式化工具（将毫秒数还原为 mm:ss.ms 格式并精准补零）
+    const formatTime = (totalMs) => {
+        if (totalMs < 0) totalMs = 0; // 容错：时间不能小于 0
+        const m = Math.floor(totalMs / 60000);
+        const s = Math.floor((totalMs % 60000) / 1000);
+        const ms = totalMs % 1000;
+
+        const mStr = String(m).padStart(2, '0');
+        const sStr = String(s).padStart(2, '0');
+        const msStr = String(ms).padStart(3, '0');
+
+        return `${mStr}:${sStr}.${msStr}`;
+    };
+
+    // 3. 正则表达式：同时匹配 [00:38.016] 和 <00:38.016> 内部的时间
+    // ([\[<]) 捕获左边界符号，(\d+:\d+\.\d+) 捕获时间轴，([\]>]) 捕获右边界符号
+    const timeRegex = /([\[<])(\d+:\d+\.\d+)([\]>])/g;
+
+    const [response1] = await Promise.all([
+        fetch('lyrics/kr-words.lrc'),  // 韩文 QRC 混合文本
+    ]);
+    let [origin] = await Promise.all([
+        response1.text()
+    ]);
+    // 4. 执行替换并返回结果
+    let text = origin.replace(timeRegex, (match, leftBracket, timeStr, rightBracket) => {
+        const originalMs = convertTime(timeStr);
+        const newMs = originalMs - n; // 往前调整 n 毫秒
+        return `${leftBracket}${formatTime(newMs)}${rightBracket}`;
+    });
+    console.log(text);
+}
+
+// shiftQrcTime(300)
+
+
+const checkLyrics = async () => {
+    const [response1, response2] = await Promise.all([
+        fetch('lyrics/check2.txt'),  // 韩文 QRC 混合文本
+        fetch('lyrics/genius.txt')   // 中文 纯文本
+    ]);
+    let [origin, test] = await Promise.all([
+        response1.text(),
+        response2.text()
+    ]);
+    origin = origin.replace(/[^\p{Script=Hangul}\s]/gu, '').trim().split(/\s+/)
+    test = test.replace(/[^\p{Script=Hangul}\s]/gu, '').trim().split(/\s+/)
+    for (let i = 0; i < origin.length; i++) {
+        if (origin[i] !== test[i]) {
+            console.log("FAIL============>>>>>>", i, origin[i], test[i]);
+            break
+        } else {
+            console.log(i, origin[i], test[i]);
+        }
+    }
+}
+checkLyrics()
+
+let lyricNodes
+const initLyrics = async () => {
+    try {
+        const [response1, response2] = await Promise.all([
+            fetch('lyrics/kr-words.qrc'),  // 韩文 QRC 混合文本
+            fetch('lyrics/v3.md')   // 中文 纯文本
+        ]);
+
+        if (!response1.ok || !response2.ok) {
+            throw new Error(`文件获取失败! 状态码: 文件1(${response1.status}), 文件2(${response2.status})`);
+        }
+
+        const [krText, cnText] = await Promise.all([
+            response1.text(),
+            response2.text()
+        ]);
+        console.log('🚀 两个新格式文本文件读取成功！');
+
+        const OFFSET = 0;
+        const convertLyricTime = (str) => {
+            if (!str) return 0;
+            // 清理掉可能残余的括号
+            const cleanStr = str.replace(/[\[\]<>]/g, '').trim();
+            const match = cleanStr.match(/(\d+):(\d+)\.(\d+)/);
+
+            if (match) {
+                const m = parseInt(match[1], 10);
+                const s = parseInt(match[2], 10);
+                let msStr = match[3];
+
+                // 补齐毫秒数位（防止出现 .64 实际代表 640ms 的情况）
+                if (msStr.length === 2) msStr += '0';
+                if (msStr.length === 1) msStr += '00';
+                const ms = parseInt(msStr, 10);
+
+                return (m * 60 + s) * 1000 + ms + OFFSET;
+            }
+            return 0;
+        };
+
+
+        const lyricMap = new Map();
+
+        // 🌟 核心改进 2：KR 新正则解析
+        // ^( ?)             -> 组1: 匹配可能存在的行首空格 (isolated)
+        // (\d+)             -> 组2: 匹配唯一标识 ID
+        // \s+\[(\d+:\d+\.\d+)\] -> 组3: 匹配整行绝对开始时间 [00:13.664]
+        // \s*(.+)$          -> 组4: 匹配后续所有的 QRC 歌词主体
+        const krRegex = /^( ?)(\d+)\s+\[(\d+:\d+\.\d+)\]\s*(.+)$/;
+
+        // 1. 解析韩文一体化数据
+        krText.split(/\r?\n/).forEach(line => {
+            const match = line.match(krRegex);
+            if (match) {
+                const hasLeadingSpace = match[1] === ' ';
+                const id = match[2];
+                const startStr = match[3];
+                const body = match[4]; // 例如: <00:13.664>바뀔 <00:14.048>...
+
+                const lineStartTime = convertLyricTime(startStr);
+                const krWords = [];
+
+                // 🌟 巧妙切分法：利用正则将时间标签和文字剥离成两个数组
+                const timeTags = body.match(/<[\d:.]+>/g) || [];  // 抓出所有 <00:13.664>
+                const textParts = body.split(/<[\d:.]+>/) || []; // 抓出所有文字片段
+
+                let cleanText = '';
+
+                // 注意：这里用 timeTags.length - 1
+                // 因为 QRC 格式的最后一个 tag（比如例子里的 <00:17.056>）后面没有字，它是专门用来卡住最后一个字结束时间的。
+                for (let i = 0; i < timeTags.length - 1; i++) {
+                    const wordText = textParts[i + 1] || ''; // split 留下的首位是空字符串，所以这里取 i + 1
+                    const start = convertLyricTime(timeTags[i]);
+                    const end = convertLyricTime(timeTags[i + 1]); // 当前字的结束时间 = 下一个字的开始时间
+
+                    cleanText += wordText;
+                    krWords.push({ w: wordText, s: start, e: end });
+                }
+
+                // 整行的结束时间，直接取这行最后一个闭合标签的时间
+                const lineEndTime = krWords.length > 0 ? krWords[krWords.length - 1].e : lineStartTime;
+
+                const lyricObj = {
+                    s: lineStartTime,
+                    e: lineEndTime,
+                    k: cleanText, // 拼好的纯韩文字符串（用于不一致时比对）
+                    c: '',
+                    krWords: krWords,
+                    color: '',
+                };
+
+                const matchedArtist = stopAt.find(item => {
+                    return lineStartTime >= item.s && lineEndTime <= item.e;
+                });
+
+                if (matchedArtist) {
+                    lyricObj.color = matchedArtist.color;
+                }
+
+                if (hasLeadingSpace) lyricObj.isolated = true;
+                lyricMap.set(id, lyricObj);
+            }
+        });
+
+        // 2. 解析中文（逻辑完全保留原样，用 ID 去匹配）
+        const cnRegex = /^\s*(\d+)\s+(.+)$/;
+        cnText.split(/\r?\n/).forEach(line => {
+            const match = line.match(cnRegex);
+            if (match) {
+                const id = match[1];
+                const text = match[2].trim();
+
+                if (lyricMap.has(id)) {
+                    const targetObj = lyricMap.get(id);
+                    targetObj.c = text;
+
+                    // 向下兼容：中文暂无单字轴，直接整句打包，让中文按整句平滑高亮
+                    targetObj.cnWords = [{ w: text, s: targetObj.s, e: targetObj.e }];
+                }
+            }
+        });
+
+
+        // 3. 排序并灌入全局队列
+        const mergedLyrics = Array.from(lyricMap.values()).sort((a, b) => a.s - b.s);
+        lyricList.length = 0
+        lyricList.push(...mergedLyrics);
+        console.log(lyricList);
+        let s = '';
+        lyricList.forEach((lyric) => {
+            lyric.krWords.forEach(word => {
+                s += word.w;
+            })
+            s += '\n'
+        })
+        // console.log(s);
+
+        // 💡 进阶补充：自动计算 'e' (结束时间)
+        // 通常当前句的结束时间，就是下一句的开始时间
+        // for (let i = 0; i < mergedLyrics.length; i++) {
+        //     if (i < mergedLyrics.length - 1) {
+        //         mergedLyrics[i].e = mergedLyrics[i + 1].s;
+        //     } else {
+        //         // 最后一句默认给个 3 秒的时长（或者根据你的音乐总长来定）
+        //         mergedLyrics[i].e = mergedLyrics[i].s + 3000;
+        //     }
+        // }
+        const createWordNodes = (wordList) => {
+            if (!wordList || wordList.length === 0) return '';
+
+            // 把单字数组连缀成一串 span 节点
+            return wordList.map(word => {
+                return `<span class="lyric-word">${word.w}</span>`;
+            }).join('');
+        };
+        // 1. 初始化阶段：一次性生成所有 DOM 节点，并保存引用
+        lyricNodes = lyricList.map((lyric) => {
+            const el = document.createElement('div');
+            el.className = 'lyric-line';
+            el.style.color = lyric.color;
+            const isSame = (lyric.k === lyric.c) || !lyric.c || lyric.c.trim() === '';
+            el.innerHTML = `
+                <div class="kr lyric-text">${createWordNodes(lyric.krWords) || lyric.k}</div>
+                ${isSame ? '' : `<div class="ch lyric-text">${lyric.c}</div>`}`;
+            el.style.transform = `translateY(${LINE_HEIGHT * 2}px)`;
+            container.appendChild(el);
+            return el;
+        });
+        console.log(mergedLyrics)
+    } catch (error) {
+        console.error('❌ 初始化读取文本文件失败:', error);
+    }
+}
 
 // 全局记录当前激活的歌词索引，用于判断是否需要触发排版动画
 let activeIndex = -1;
@@ -217,69 +437,84 @@ const renderLyrics = (current) => {
 
     // 【阶段 B】：如果居中歌词发生切换，触发排版和动画
     if (newActiveIndex !== activeIndex) {
-        const isNewIsolated = lyricList[newActiveIndex]?.isolated;
-
         lyricList.forEach((lyric, i) => {
-            const node = domNodes[i];
-            let targetY = 0;
+            const node = lyricNodes[i]; // 注意：和你初始化时的数组名保持一致 (domNodes 或 lyricNodes)
+
+            const offset = i - newActiveIndex;
+            let targetY = offset * LINE_HEIGHT;
             let targetOpacity = 0;
-
-            if (isNewIsolated) {
-                // 处理 Isolated: true 的特殊逻辑
-                if (i === newActiveIndex) {
-                    targetY = 0;
-                    targetOpacity = 1;
-                    // 【细节优化】如果它是凭空出现的，取消它的滑动过程，强制在原地渐入
-                    if (node.style.opacity === '0' || node.style.opacity === '') {
-                        node.style.transition = 'none'; // 暂禁动画
-                        node.style.transform = 'translateY(0px)';
-                        void node.offsetWidth; // 触发浏览器重排，使 translateY(0) 立即生效
-                        node.style.transition = ''; // 恢复动画
-                    }
-                } else {
-                    // 其他所有歌词：【原地渐出消失】
-                    // 核心：不要修改 targetY (不更新 transform)，只把 opacity 设为 0
-                    node.style.opacity = '0';
-                    node.classList.remove('is-center');
-                    return; // 跳过下方的 transform 设置
-                }
-            } else {
-                // 处理正常滚动逻辑
-                const offset = i - newActiveIndex;
-                targetY = offset * LINE_HEIGHT;
-
-                if (offset === 0) { // 正在唱的
-                    targetOpacity = 1;
-                } else if (offset === -1) { // 上一句
-                    targetOpacity = 0.3;
-                } else if (offset === 1) { // 下一句
-                    // 【特殊处理】：如果下一句是 isolated，它“永远不能出现在第三行”
-                    targetOpacity = lyricList[i].isolated ? 0 : 0.3;
-                } else { // 视口之外
-                    targetOpacity = 0;
+            // 1. 正在唱的当前句 (永远在中间)
+            if (offset === 0) {
+                targetOpacity = 1;
+                // Isolated 的原地渐入效果保留
+                if (lyric.isolated && (node.style.opacity === '0' || node.style.opacity === '')) {
+                    node.style.transition = 'none';
+                    node.style.transform = 'translateY(0px)';
+                    void node.offsetWidth;
+                    node.style.transition = '';
                 }
             }
+            // 2. 上一句 (应该出现在第一行)
+            else if (offset === -1) {
+                // 如果当前正在唱的是 isolated，或者上一句本身是 isolated，则不显示在第一行
+                if (lyricList[newActiveIndex].isolated) {
+                    targetOpacity = 0;
+                } else {
+                    targetOpacity = 0.3;
+                }
+            }
+            // 3. 下一句 (应该出现在第三行)
+            else if (offset === 1) {
+                // 🌟 核心修复 2：
+                // 只要下一句自己不是 isolated，无论当前句是不是 isolated，它都应该在第三行排队准备！
+                if (lyric.isolated) {
+                    targetOpacity = 0;
+                } else {
+                    targetOpacity = 0.3;
+                }
+            }
+            // 4. 其他视口之外的距离
+            else {
+                targetOpacity = 0;
+            }
 
-            // 应用计算后的排版样式
+            // 统一应用计算后的排版样式
             node.style.transform = `translateY(${targetY}px)`;
             node.style.opacity = targetOpacity;
-            node.classList.toggle('is-center', i === newActiveIndex);
+            node.classList.toggle('is-center', offset === 0);
         });
 
         activeIndex = newActiveIndex; // 更新全局状态
     }
 
-    // 【阶段 C】：计算并更新卡拉OK进度
+    // 【阶段 C】：精确到单字的逐字卡拉OK进度更新
     if (activeIndex !== -1) {
         const line = lyricList[activeIndex];
-        let p = 0;
-        if (current >= line.s && current <= line.e) {
-            p = ((current - line.s) / (line.e - line.s)) * 100; // 计算百分比
-        } else if (current > line.e) {
-            p = 100; // 唱完了保持全满
+        const lineNode = lyricNodes[activeIndex]; // 当前在唱的整行 DOM 节点
+
+        // 🌟 1. 获取这行里面所有的韩文单字节点和中文单字节点
+        const krWordNodes = lineNode.querySelectorAll('.kr .lyric-word');
+        // 🌟 2. 渲染韩文逐字进度
+        if (line.krWords) {
+            line.krWords.forEach((word, idx) => {
+                const node = krWordNodes[idx];
+                if (!node) return;
+
+                let wp = 0;
+                if (current < word.s) {
+                    wp = 0;   /* 还没唱到这个字，全暗 */
+                } else if (current > word.e) {
+                    wp = 100; /* 已经唱完这个字，全亮 */
+                } else {
+                    // 正在唱这个字！精准计算当前字内部的百分比
+                    // console.log('wp====', wp, current, word)
+                    wp = ((current - word.s) / (word.e - word.s)) * 100;
+                }
+                // console.log('wp====', wp, current, word)
+                node.style.setProperty('--wp', `${wp}%`);
+                node.style.setProperty('--word-color', line.color);
+            });
         }
-        // 通过 CSS 变量更新 UI
-        domNodes[activeIndex].style.setProperty('--p', `${p}%`);
     }
 };
 
@@ -290,7 +525,7 @@ let imagesLoaded = false;
 const preloadAllImages = () => {
     return new Promise((resolve) => {
         // 1. 收集 stopAt 中所有不重复的图片路径
-        const uniqueImages = [...new Set(stopAt.map(infos => infos[4]).filter(Boolean))];
+        const uniqueImages = [...new Set(stopAt.map(_ => _.portrait).filter(Boolean))];
         let loadedCount = 0;
         const totalImages = uniqueImages.length;
 
@@ -316,26 +551,38 @@ const preloadAllImages = () => {
     });
 };
 
-
+const DEBUG = true;
+const DEBUG_START_TIME_STRING = "00:10.375"
+const toCurrentTimeStr = timeString => {
+    const t = timeString.split(':');
+    const minutes = parseFloat(t[0]);
+    const seconds = parseFloat(t[1]);
+    // 直接数学相加返回纯秒数数字
+    return (minutes * 60) + seconds;
+}
+const DEBUG_START_TIME = toCurrentTimeStr(DEBUG_START_TIME_STRING);
 const turnOn = () => {
     if (imagesLoaded) {
         audio.muted = false;
+        audio.volume = 0.02;
+        if (DEBUG) {
+            // 🌟 新增这行：设置你想跳转的调试时间（单位：秒，支持小数）
+            audio.currentTime = DEBUG_START_TIME;           // 比如直接跳到 20.5 秒
+            // 🌟 新增这行：强制把你的全局视觉时钟对齐（秒 * 1000 = 毫秒）
+            current = DEBUG_START_TIME * 1000;
+        }
         audio.play();
         requestAnimationFrame(animationLoop);
     }
 }
-
-const convertTime = (str) => {
-    const tArray = str.split(':');
-    return (+tArray[0] * 60 + +tArray[1]) * 1000 + +tArray[2];
-}
-const startOfAll = convertTime(stopAt[0][0])
-
 document.addEventListener('DOMContentLoaded', async () => {
-    // 1. 先在后台全力下载图片（十几张图通常在半秒内搞定）
-    await preloadAllImages();
+    generateStageSlots();
+    await Promise.all([initLyrics(), preloadAllImages()]);
     imagesLoaded = true;
+    // 👉 补充这一行：传入你指定的毫秒数 (上面秒数 * 1000，比如 65.5秒 = 65500)
+    DEBUG && renderLyrics(DEBUG_START_TIME * 1000);
 });
+
 </script>
 
 <style>
@@ -346,18 +593,112 @@ html, body {
 body {
     position: relative; /* 核心：作为子元素定位的基准 */
 }
-.bar {
+#bar {
     width: 100%;
     position: fixed;
     display: flex;
     top: 0;
+    background-color: #ff0;
 }
-.bar .grid-item {
+#bar .grid-item {
     flex: 1;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
+#bar .name {
+    background: linear-gradient(rgba(20, 20, 20, 0.2), rgba(20, 20, 20, 0.2)),
+    rgba(255, 255, 255, 0.1);
+
+    /*background-color: blue;*/
+
+    color: #ffffff;
+    padding: 6px 22px;
+    font-size: 24px;
+    font-weight: 600;
+
+    /* 并在滤镜中同时加入 contrast(对比度) 和 brightness(亮度) 修正 */
+    backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+    -webkit-backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+#bar .active .name {
+    /* 1. 【形状文字 - 保持原样】 */
+    color: #ffffff;
+    padding: 6px 22px;
+    font-size: 24px;
+    font-weight: 600;
+    border-radius: 50px; /* 胶囊圆角不变 */
+
+    /* 文字阴影稍微加强一点，保证在极炫背景下的可读性 */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+
+    /* 2. 【核心滤镜 - 保持毛玻璃感，但去除压暗，恢复明亮】 */
+    backdrop-filter: blur(12px) contrast(1.2); /* 去除了 brightness(0.85)，让背景透出来 */
+    -webkit-backdrop-filter: blur(12px) contrast(1.2);
+
+    /* 3. 【醒目色彩 - 引入高饱和度、明亮的霓虹渐变底色】 */
+    /* 使用 400% 的宽度是为了给后面的背景流色动画留出空间 */
+    background: linear-gradient(110deg,
+    rgba(29, 185, 84, 0.6) 0%,   /* Spotify绿 */
+    rgba(0, 255, 255, 0.5) 25%,  /* 赛博蓝 */
+    rgba(255, 0, 127, 0.5) 50%,  /* 霓虹玫红 */
+    rgba(0, 255, 255, 0.5) 75%,  /* 赛博蓝 */
+    rgba(29, 185, 84, 0.6) 100%  /* 循环回绿色 */
+    );
+    background-size: 400% 100%; /* 放大背景以便流动 */
+
+    /* 4. 【炫光动态 - 边框追光与背景流色动画统一触发】 */
+    /* 1px 细边框作为追光的载体 */
+    border: 1px solid transparent;
+
+    /* 🌟 炫光核心 1：复合阴影
+       第一层：霓虹外发光 (Glow)
+       第二层：极其明亮的内高光 (边框炫光感)
+    */
+    box-shadow:
+            0 0 20px rgba(0, 255, 255, 0.5), /* 整体霓虹氛围 */
+            inset 0 0 12px rgba(255, 255, 255, 0.6); /* 内部炫目高光 */
+
+    /* 🌟 炫光核心 2：应用动画 */
+    animation:
+            glaring-border 1.5s linear infinite, /* 边框炫光呼吸 */
+            flow-background 8s linear infinite;    /* 背景色彩缓慢流动 */
+}
+
+/* ==================== 炫光动态关键帧 Keyframes ==================== */
+
+/* 1. 边框炫光呼吸：让边框颜色和外发光像激光一样呼吸闪烁 */
+@keyframes glaring-border {
+    0% {
+        border-color: rgba(0, 255, 255, 0.8); /* 赛博蓝 */
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        border-color: rgba(255, 0, 127, 0.8); /* 霓虹玫红 */
+        /* 呼吸到最亮点 */
+        box-shadow: 0 0 30px rgba(255, 0, 127, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.9);
+    }
+    100% {
+        border-color: rgba(0, 255, 255, 0.8); /* 回到赛博蓝 */
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* 2. 背景色彩流动：让高饱和度的渐变色在胶囊内部缓慢流淌 */
+@keyframes flow-background {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; } /* 横向滚动整个渐变带 */
+}
+
+
+
 .grid-item .portrait {
     /*background-color: #ff0; !* 作为图片加载失败或未加载时的兜底背景色 *!*/
-    height: 300px;
+    height: 350px;
     position: relative;
     /* 核心逻辑：图片等比缩放填满容器，绝不拉伸 */
     background-size: cover;
@@ -378,11 +719,27 @@ body {
 .grid-item .portrait.loaded {
     opacity: 1;
 }
-/* 3. 🌟 核心激活状态：当 current 处于区间内时，JS 会加上这个类名，图片瞬间变回彩色 */
-.grid-item .portrait.active {
-    filter: grayscale(0%);
-    /* 可选：如果你想让彩色的图片稍微有一点点放大凸显的效果，可以解开下面这行 */
-    /* transform: scale(1.02); */
+/* 2. 轻微悬浮律动：模仿舞台卡片浮动，Y轴微调 3 像素，极具动感 */
+@keyframes floating {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-3px); /* 向上微微悬浮 */
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+@keyframes active-glow {
+    0% {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(29, 185, 84, 0.2); /* 绿色微光 */
+    }
+    100% {
+        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(29, 185, 84, 0.7); /* 强力绿光舞台焦点 */
+    }
 }
 .grid-item .portrait .name {
     position: absolute;
@@ -394,10 +751,22 @@ body {
 }
 .grid-item .countdown {
     height: 50px;
+    padding: 0 30px;
     background-color: #000;
-    display: flex; align-items: center; justify-content: center; gap: 30px;
+    display: flex; align-items: center;
+    justify-content: space-between;
     font-size: 22px; font-weight: bold;
     color: #fff;
+}
+.countdown > div {
+    display: flex; align-items: center;
+    justify-content: space-between;
+}
+.countdown .sec-container {
+    width: 60px;
+}
+.countdown .per-container {
+    width: 55px;
 }
 .countdown .sec {
 }
@@ -406,9 +775,9 @@ body {
 /* 歌词主容器 */
 .rolling-lyrics {
     position: absolute;
-    top: 50%;
+    top: 45%;
     width: 100%;
-    height: 300px; /* 控制可视区域高度，假设每行80px，正好显示3行 */
+    height: 500px; /* 控制可视区域高度，假设每行80px，正好显示3行 */
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -425,30 +794,40 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
     /*gap: 4px;*/
     /* 核心：极其丝滑的动画过渡 */
-    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.4s ease,
-    scale 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.2s ease,
+    scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
     opacity: 0;
     pointer-events: none;
 }
 /* 歌词文字与卡拉OK效果 */
 .lyric-text {
-    font-weight: 700;
-    /* 利用 CSS 变量 --p 配合硬分界渐变，实现从左到右的高亮填充 */
-    background: linear-gradient(to right, #1db954 var(--p, 0%), rgba(0, 0, 0, 0.4) var(--p, 0%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    width: fit-content;
 }
-.lyric-text.kr { font-size: 20px; }
-.lyric-text.ch { font-size: 20px; font-weight: 500; }
+.lyric-text.kr { font-size: 35px; font-weight: 550; }
+.lyric-text.ch { font-size: 35px; font-weight: 550; }
 
 /* 正在演唱的中间行高亮放大 */
-.lyric-line.is-center { scale: 1.2; }
-.lyric-line.is-center .lyric-text {
-    background: linear-gradient(to right, #000000 var(--p, 0%), rgba(0, 0, 0, 0.4) var(--p, 0%));
+.lyric-line.is-center {
+    scale: 1.2;
+}
+/* 🌟 核心：高亮效果绑定在单独的字上 */
+.lyric-word {
+    display: inline-block; /* 必须是 inline-block，否则 width: fit-content 和渐变无法生效 */
+    /*font-weight: 700;*/
+    color: var(--word-color);
+    /* 允许词与词之间有自然的间距 */
+    white-space: pre;
+}
+
+/* 正在演唱的中间行高亮放大 */
+.lyric-line.is-center .lyric-word {
+    background: linear-gradient(to right, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
     -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 </style>
 </html>
