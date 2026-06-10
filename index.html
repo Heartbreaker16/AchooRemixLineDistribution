@@ -407,6 +407,12 @@ const initLyrics = async () => {
             const el = document.createElement('div');
             el.className = 'lyric-line';
             el.style.color = lyric.color;
+
+            // 🌟 新增：利用正则检测当前行是否包含阿拉伯语字符块 (\u0600-\u06FF)
+            const isArabic = /[\u0600-\u06FF]/.test(lyric.k || lyric.c);
+            // 如果是阿拉伯语，给这行单独加上 rtl-line 类名
+            if (isArabic) el.classList.add('rtl-line');
+
             const isSame = (lyric.k === lyric.c) || !lyric.c || lyric.c.trim() === '';
             el.innerHTML = `
                 <div class="kr lyric-text">${createWordNodes(lyric.krWords) || lyric.k}</div>
@@ -828,6 +834,15 @@ body {
     background: linear-gradient(to right, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+/* 🌟 1. 改变整行文本流向，使其从右到左排列（符合阿拉伯语阅读习惯） */
+.rtl-line .lyric-text {
+    direction: rtl;
+}
+/* 居中激活状态的高亮 */
+.rtl-line.is-center .lyric-word {
+    background: linear-gradient(to left, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
+    -webkit-background-clip: text;
 }
 </style>
 </html>
