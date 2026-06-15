@@ -91,7 +91,7 @@ const animationLoop = (timestamp) => {
                 // 🌟 核心计算：计算当前歌手剩余时间的比例 (1.0 走向 0.0)
                 const remainingRatio = Math.max(0, (realEnd - current) / (realEnd - realStart));
                 renderPortrait(i, true, remainingRatio)
-                render('ar-' + position, true, { sec: (duration / 1000).toFixed(1), per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) })
+                renderProcess('ar-' + position, { sec: (duration / 1000).toFixed(1), per: (duration * 100 / TOTAL_MAX_TIME).toFixed(1) })
                 if (position === CYCLE) {
                     renderedLastPosition = true
                 }
@@ -100,8 +100,8 @@ const animationLoop = (timestamp) => {
                 renderPortrait(i, false)
                 if (position === CYCLE) {
                     indexOfPosition1 = i + 1;
-                    // for (let _ = 1; _ <=  CYCLE; _++)
-                    //     render('ar-' + _, true, {  })
+                    for (let _ = 1; _ <=  CYCLE; _++)
+                        renderProcess('ar-' + _)
                 }
             } else if (current < start) {
                 // break
@@ -189,23 +189,18 @@ const renderPortrait = (index, on, remainingRatio = 0) => {
     }
 }
 
-const render = (id, isShow, data = {}) => {
+const renderProcess = (id, data = {}) => {
     const el = document.getElementById(id);
     if (!el) return; // 容错处理：找不到元素直接返回
-    // 1. 控制显隐
-    el.style.display = isShow ? '' : 'none'; // '' 表示恢复 CSS 中默认的布局方式(如 flex/grid)
-    // 2. 如果显示且传入了数据，则更新子元素
-    if (isShow) {
-        const secNode = el.querySelector('.sec-container');
-        if (secNode) {
-            secNode.querySelector('.value').textContent = data.sec || ''
-            secNode.querySelector('.unit').textContent = data.sec ? 's' : ''
-        }
-        const perNode = el.querySelector('.per-container');
-        if (perNode) {
-            perNode.querySelector('.value').textContent = data.per || ''
-            perNode.querySelector('.unit').textContent = data.per ? '%' : ''
-        }
+    const secNode = el.querySelector('.sec-container');
+    if (secNode) {
+        secNode.querySelector('.value').textContent = data.sec || ''
+        secNode.querySelector('.unit').textContent = data.sec ? 's' : ''
+    }
+    const perNode = el.querySelector('.per-container');
+    if (perNode) {
+        perNode.querySelector('.value').textContent = data.per || ''
+        perNode.querySelector('.unit').textContent = data.per ? '%' : ''
     }
 }
 
