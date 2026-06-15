@@ -20,34 +20,60 @@ const convertTime = (timeStr) => {
     const ms = parseInt(msStr, 10);
     return (m * 60 + s) * 1000 + ms;
 }
-
+const imageMap = new Map([
+    ['Mirani', [ { portrait: 'mirani.jpg', poster: { p: '50% 5%', s: '160% auto'}, avatar: { p: '60% 5%', s: '190% auto'}, color: '#C71585' } ]],
+    ['pH-1', [ { portrait: 'ph1.jpg', poster: { p: '50% 20%', s: '125% auto'}, avatar: { p: '50% 0%', s: '135% auto'}, color: '#8B0000' } ]],
+    ['Munchman', [ { portrait: 'munchman.jpg', poster: { p: '50% 10%', s: '210% auto'}, avatar: { p: '50% 10%', s: '260% auto'}, color: '#0233AA' } ]],
+    ['Skinny Brown', [ { portrait: 'SkinnyBrown.webp', poster: { p: '50% 5%', s: '100% auto'}, avatar: { p: '50% 0%', s: '110% auto'}, color: '#1794C2' } ]],
+    ['YDP Louie', [ { portrait: 'louie.jpg', poster: { p: '60% 13%', s: '180% auto'}, avatar: { p: '60% 12%', s: '180% auto'}, color: '#ff0000' } ]],
+    ['Leellamarz', [ { portrait: 'leellamarz.webp', poster: { p: '50% 0%', s: '110% auto'}, avatar: { p: '50% 0%', s: '120% auto'}, color: '#3A2975', realEnd: '03:12.600' } ]],
+    ['Ourealgoat', [ { portrait: 'Ourealgoat_1.webp', poster: { p: '50% 50%', s: '125% auto'}, avatar: { p: '50% 20%', s: '125% auto'}, color: '#800080' } ]],
+    ['Dbo', [ { portrait: 'dbo.jpg', poster: { p: '50% 50%', s: '125% auto'}, avatar: { p: '50% 50%', s: '120% auto'}, color: '#9E1313' } ]],
+    ['Sik-K', [ { portrait: 'Sik-K-3.webp', poster: { p: '50% 54%', s: '170% auto'}, avatar: { p: '60% 45%', s: '180% auto'}, color: '#2151d1' } ]],
+    ['Owen', [ { portrait: 'owen.jpg', poster: { p: '38% 25%', s: '340% auto'}, avatar: { p: '38% 10%', s: '360% auto'}, color: '#cc6600' } ]],
+    ['Kid Milli', [ { portrait: 'KidMilli.webp', poster: { p: '50% 0%', s: '100% auto'}, avatar: { p: '50% 0%', s: '100% auto'}, color: '#1B2452' } ]],
+    ['Swings', [ { portrait: 'swings.jpg', poster: { p: '50% 10%', s: '200% auto'}, avatar: { p: '50% 10%', s: '250% auto'}, color: '#00A752', realStart: '05:55.248' } ]],
+    ['Nudeboi Seo', [ { portrait: 'Nudeboi_Seo_1.webp', poster: { p: '90% 50%', s: '122% auto'}, avatar: { p: '100% 0%', s: '112% auto'}, color: '#C27517' } ]],
+    ['TRADE L', [ { portrait: 'TRADE-L-01.jpg', poster: { p: '50% 100%', s: '100% auto'}, avatar: { p: '30% 50%', s: '110% auto'}, color: '#7295CF' } ]],
+    ['Coogie', [ { portrait: 'coogie2.jpg', poster: { p: '30% 10%', s: '160% auto'}, avatar: { p: '30% 10%', s: '160% auto'}, color: '#C87B64' } ]],
+    ['BLASÉ', [ { portrait: 'blase.png', poster: { p: '40% 0%', s: '220% auto'}, avatar: { p: '40% 0%', s: '220% auto'}, color: '#555B5B' } ]],
+    ['sokodomo', [ { portrait: 'sokodomo.jpg', poster: { p: '40% 0%', s: '115% auto'}, avatar: { p: '40% 16%', s: '120% auto'}, color: '#690099' } ]],
+    ['Khundi Panda', [ { portrait: 'khundipanda2.jpg', poster: { p: '100% 60%', s: '150% auto'}, avatar: { p: '100% 50%', s: '150% auto'}, color: '#038183' } ]],
+    ['Lil Moshpit', [ { portrait: 'Lil_moshpit_1.webp', poster: { p: '50% 10%', s: '270% auto'}, avatar: { p: '50% 10%', s: '300% auto'}, color: '#1D002B' } ]],
+    ['Khakii', [ { portrait: 'Khakii.jpg', poster: { p: '50% 0%', s: '100% auto'}, avatar: { p: '50% 0%', s: '100% auto'}, color: '#296796' } ]],
+    ['JUSTHIS', [ { portrait: 'justhis.jpeg', poster: { p: '50% 40%', s: '220% auto'}, avatar: { p: '50% 40%', s: '220% auto'}, color: '#4B0082' } ]],
+    ['GroovyRoom', [ { portrait: 'Park_gyu-jeong_1.webp', avatar: { p: '50% 10%', s: '100% auto'} }, { portrait: 'Lil_moshpit_1.webp', avatar: { p: '50% 10%', s: '300% auto'} } ]],
+    ['albumcover', [ { portrait: 'albumcover.jpg', poster: { p: '50% 50%', s: '100% auto'} }, { portrait: 'albumcover-line.png', poster: { p: '50% 50%', s: '100% auto'} } ]],
+    ['Indigo Music', [ { portrait: 'indigo.jpg', avatar: { p: '50% 50%', s: '100% auto'} } ]],
+    ['H1GHR MUSIC', [ { portrait: 'h1ghr.jpg', avatar: { p: '50% 50%', s: '100% auto'} } ]],
+])
 const stopAt = [
-    { s: '00:13.364', e: '00:26.952', position: 1, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
-    { s: '00:26.972', e: '00:40.675', position: 2, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
-    { s: '00:41.176', e: '01:21.383', position: 3, name: 'Munchman', portrait: 'munchman.jpg', bgPos: '50% 10%', bgSize: '210% auto', color: '#0233AA' },
-    { s: '01:21.961', e: '01:35.549', position: 1, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
-    { s: '01:35.464', e: '01:49.167', position: 2, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
-    { s: '01:49.714', e: '02:16.907', position: 4, name: 'Skinny Brown', portrait: 'SkinnyBrown.webp', bgPos: '50% 5%', bgSize: '100% auto', color: '#1794C2' },
-    { s: '02:17.376', e: '02:44.228', position: 5, name: 'YDP Louie', portrait: 'louie.jpg', bgPos: '60% 13%', bgSize: '180% auto', color: '#ff0000' },
-    { s: '02:44.620', e: '03:11.500', position: 6, name: 'Leellamarz', portrait: 'leellamarz.webp', bgPos: '50% 0%', bgSize: '110% auto', color: '#3A2975', realEnd: '03:12.600' },
-    { s: '03:11.500', e: '03:39.106', position: 1, name: 'Ourealgoat', portrait: 'Ourealgoat_1.webp', bgPos: '50% 50%', bgSize: '125% auto', color: '#800080' },
-    { s: '03:39.541', e: '04:06.265', position: 2, name: 'Dbo', portrait: 'dbo.jpg', bgPos: '50% 50%', bgSize: '125% auto', color: '#9E1313' },
-    { s: '04:06.708', e: '04:48.200', position: 3, name: 'Sik-K', portrait: 'Sik-K-3.webp', bgPos: '50% 54%', bgSize: '170% auto', color: '#2151d1' },
-    { s: '04:47.650', e: '05:01.353', position: 4, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
-    { s: '05:01.600', e: '05:29.214', position: 5, name: 'Owen', portrait: 'owen.jpg', bgPos: '38% 25%', bgSize: '340% auto', color: '#cc6600' },
-    { s: '05:29.256', e: '05:56.500', position: 6, name: 'Kid Milli', portrait: 'KidMilli.webp', bgPos: '50% 0%', bgSize: '100% auto', color: '#1B2452' },
-    { s: '05:56.548', e: '06:24.117', position: 1, name: 'Swings', portrait: 'swings.jpg', bgPos: '50% 10%', bgSize: '200% auto', color: '#00A752', realStart: '05:55.248' },
-    { s: '06:24.253', e: '06:52.000', position: 2, name: 'Nudeboi Seo', portrait: 'Nudeboi_Seo_1.webp', bgPos: '90% 50%', bgSize: '122% auto', color: '#C27517' },
-    { s: '06:51.321', e: '07:18.814', position: 3, name: 'TRADE L', portrait: 'TRADE-L-01.jpg', bgPos: '50% 100%', bgSize: '100% auto', color: '#7295CF' },
-    { s: '07:18.854', e: '07:45.701', position: 4, name: 'Coogie', portrait: 'coogie2.jpg', bgPos: '30% 10%', bgSize: '160% auto', color: '#C87B64' },
-    { s: '07:46.013', e: '08:13.277', position: 5, name: 'Blase', portrait: 'blase.png', bgPos: '40% 0%', bgSize: '220% auto', color: '#555B5B' },
-    { s: '08:15.637', e: '08:40.843', position: 6, name: 'sokodomo', portrait: 'sokodomo.jpg', bgPos: '40% 0%', bgSize: '115% auto', color: '#690099' },
-    { s: '08:41.134', e: '09:08.840', position: 1, name: 'Khundi Panda', portrait: 'khundipanda2.jpg', bgPos: '100% 60%', bgSize: '150% auto', color: '#038183' },
-    { s: '09:09.169', e: '09:36.001', position: 2, name: 'Lil Moshpit', portrait: 'Lil_moshpit_1.webp', bgPos: '50% 10%', bgSize: '270% auto', color: '#1D002B' },
-    { s: '09:36.464', e: '10:03.042', position: 3, name: 'Khakii', portrait: 'Khakii.jpg', bgPos: '50% 0%', bgSize: '100% auto', color: '#296796' },
-    { s: '10:03.073', e: '10:57.701', position: 4, name: 'JUSTHIS', portrait: 'justhis.jpeg', bgPos: '50% 40%', bgSize: '220% auto', color: '#4B0082' },
-    { s: '10:57.757', e: '11:11.345', position: 5, name: 'Mirani', portrait: 'mirani.jpg', bgPos: '50% 5%', bgSize: '160% auto', color: '#C71585' },
-    { s: '11:11.604', e: '11:25.307', position: 6, name: 'pH-1', portrait: 'ph1.jpg', bgPos: '50% 20%', bgSize: '125% auto', color: '#8B0000' },
+    { s: '00:13.364', e: '00:26.952', position: 1, name: 'Mirani', color: '#C71585' },
+    { s: '00:26.972', e: '00:40.675', position: 2, name: 'pH-1', color: '#8B0000' },
+    { s: '00:41.176', e: '01:21.383', position: 3, name: 'Munchman', color: '#0233AA' },
+    { s: '01:21.961', e: '01:35.549', position: 1, name: 'Mirani', color: '#C71585' },
+    { s: '01:35.464', e: '01:49.167', position: 2, name: 'pH-1', color: '#8B0000' },
+    { s: '01:49.714', e: '02:16.907', position: 4, name: 'Skinny Brown', color: '#1794C2' },
+    { s: '02:17.376', e: '02:44.228', position: 5, name: 'YDP Louie', color: '#ff0000' },
+    { s: '02:44.620', e: '03:11.500', position: 6, name: 'Leellamarz', color: '#3A2975', realEnd: '03:12.600' },
+    { s: '03:11.500', e: '03:39.106', position: 1, name: 'Ourealgoat', color: '#800080' },
+    { s: '03:39.541', e: '04:06.265', position: 2, name: 'Dbo', color: '#9E1313' },
+    { s: '04:06.708', e: '04:48.200', position: 3, name: 'Sik-K', color: '#2151d1' },
+    { s: '04:47.650', e: '05:01.353', position: 4, name: 'pH-1', color: '#8B0000' },
+    { s: '05:01.600', e: '05:29.214', position: 5, name: 'Owen', color: '#cc6600' },
+    { s: '05:29.256', e: '05:56.500', position: 6, name: 'Kid Milli', color: '#1B2452' },
+    { s: '05:56.548', e: '06:24.117', position: 1, name: 'Swings', color: '#00A752', realStart: '05:55.248' },
+    { s: '06:24.253', e: '06:52.000', position: 2, name: 'Nudeboi Seo', color: '#C27517' },
+    { s: '06:51.321', e: '07:18.814', position: 3, name: 'TRADE L', color: '#7295CF' },
+    { s: '07:18.854', e: '07:45.701', position: 4, name: 'Coogie', color: '#C87B64' },
+    { s: '07:46.013', e: '08:13.277', position: 5, name: 'BLASÉ', color: '#555B5B' },
+    { s: '08:15.637', e: '08:40.843', position: 6, name: 'sokodomo', color: '#690099' },
+    { s: '08:41.134', e: '09:08.840', position: 1, name: 'Khundi Panda', color: '#038183' },
+    { s: '09:09.169', e: '09:36.001', position: 2, name: 'Lil Moshpit', color: '#1D002B' },
+    { s: '09:36.464', e: '10:03.042', position: 3, name: 'Khakii', color: '#296796' },
+    { s: '10:03.073', e: '10:57.701', position: 4, name: 'JUSTHIS', color: '#4B0082' },
+    { s: '10:57.757', e: '11:11.345', position: 5, name: 'Mirani', color: '#C71585' },
+    { s: '11:11.604', e: '11:25.307', position: 6, name: 'pH-1', color: '#8B0000' },
 ].map(_ => {
     // 设置该值用于这种情况：本轮最后一个歌手还没唱完，下一个歌手已经开始唱了，这时没办法同时显示，
     // 于是设置这个歌手唱完，再显示下一个歌手，只不过让下一个歌手的计时时间设置这个重合时段为初始值
@@ -117,7 +143,9 @@ const animationLoop = (timestamp) => {
 }
 const index2Image = new Map(), index2Filter = new Map()
 const renderPortrait = (index, on, remainingRatio = 0) => {
-    const { position, name, portrait, bgSize, bgPos, color } = stopAt[index];
+    const { position, name } = stopAt[index];
+    const members = imageMap.get(name)
+    const { portrait, poster, color } = members[0]
     const el = document.getElementById('ar-' + position);
 
     const nameNode = el.querySelector('.name');
@@ -125,14 +153,14 @@ const renderPortrait = (index, on, remainingRatio = 0) => {
     const countdownNode = el.querySelector('.countdown')
 
     const originImage = index2Image.get(index)
-    const newImage = `url('portrait/${portrait}')`
+    const newImage = `url('images/${portrait}')`
     const originGrayscale = index2Filter.get(index)
     const newGrayscale = on ? 'grayscale(0)' : 'grayscale(90%)'
     if (originImage !== newImage) {
         console.log(originImage, newImage)
         const portraitNode = el.querySelector('.portrait')
-        portraitNode.style.backgroundPosition = bgPos || '50% 50%';
-        portraitNode.style.backgroundSize = bgSize || 'cover';
+        portraitNode.style.backgroundPosition = poster.p || '50% 50%';
+        portraitNode.style.backgroundSize = poster.s || 'cover';
         portraitNode.style.filter = newGrayscale;
         portraitNode.style.backgroundImage = newImage
         index2Image.set(index, newImage);
@@ -395,7 +423,7 @@ const initLyrics = async () => {
                 });
 
                 if (matchedArtist) {
-                    lyricObj.color = matchedArtist.color;
+                    lyricObj.color = imageMap.get(matchedArtist.name)[0].color;
                 }
 
                 if (hasLeadingSpace) lyricObj.isolated = true;
@@ -583,7 +611,10 @@ let imagesLoaded = false;
 const preloadAllImages = () => {
     return new Promise((resolve) => {
         // 1. 收集 stopAt 中所有不重复的图片路径
-        const uniqueImages = [...new Set(stopAt.map(_ => _.portrait).filter(Boolean))];
+        const uniqueImages = [...new Set(
+            stopAt.flatMap(_ => imageMap.get(_.name)?.map(a => a.portrait) || [])
+                .filter(Boolean)
+        )];
         let loadedCount = 0;
         const totalImages = uniqueImages.length;
 
@@ -591,7 +622,7 @@ const preloadAllImages = () => {
 
         uniqueImages.forEach(imgName => {
             const img = new Image();
-            const path = 'portrait/' + imgName;
+            const path = 'images/' + imgName;
 
             img.onload = img.onerror = () => {
                 loadedCount++;
@@ -653,249 +684,141 @@ body {
 }
 #bar {
     width: 100%;
-    position: fixed;
-    display: flex;
-    top: 0;
+    position: fixed; top: 0;
     background-color: #ff0;
-}
-#bar .grid-item {
-    flex: 1;
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-#bar .name {
-    background: linear-gradient(rgba(20, 20, 20, 0.2), rgba(20, 20, 20, 0.2)),
-    rgba(255, 255, 255, 0.1);
-
-    /*background-color: blue;*/
-
-    color: #ffffff;
-    padding: 6px 22px;
-    font-size: 24px;
-    font-weight: 600;
-
-    /* 并在滤镜中同时加入 contrast(对比度) 和 brightness(亮度) 修正 */
-    backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
-    -webkit-backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
-
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-#bar .active .name {
-    /* 1. 【形状文字 - 保持原样】 */
-    color: #ffffff;
-    padding: 6px 22px;
-    font-size: 24px;
-    font-weight: 600;
-    border-radius: 50px; /* 胶囊圆角不变 */
-
-    /* 文字阴影稍微加强一点，保证在极炫背景下的可读性 */
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-
-    /* 2. 【核心滤镜 - 保持毛玻璃感，但去除压暗，恢复明亮】 */
-    backdrop-filter: blur(12px) contrast(1.2); /* 去除了 brightness(0.85)，让背景透出来 */
-    -webkit-backdrop-filter: blur(12px) contrast(1.2);
-
-    /* 3. 【醒目色彩 - 引入高饱和度、明亮的霓虹渐变底色】 */
-    /* 使用 400% 的宽度是为了给后面的背景流色动画留出空间 */
-    background: linear-gradient(110deg,
-    rgba(29, 185, 84, 0.6) 0%,   /* Spotify绿 */
-    rgba(0, 255, 255, 0.5) 25%,  /* 赛博蓝 */
-    rgba(255, 0, 127, 0.5) 50%,  /* 霓虹玫红 */
-    rgba(0, 255, 255, 0.5) 75%,  /* 赛博蓝 */
-    rgba(29, 185, 84, 0.6) 100%  /* 循环回绿色 */
-    );
-    background-size: 400% 100%; /* 放大背景以便流动 */
-
-    /* 4. 【炫光动态 - 边框追光与背景流色动画统一触发】 */
-    /* 1px 细边框作为追光的载体 */
-    border: 1px solid transparent;
-
-    /* 🌟 炫光核心 1：复合阴影
-       第一层：霓虹外发光 (Glow)
-       第二层：极其明亮的内高光 (边框炫光感)
-    */
-    box-shadow:
-            0 0 20px rgba(0, 255, 255, 0.5), /* 整体霓虹氛围 */
-            inset 0 0 12px rgba(255, 255, 255, 0.6); /* 内部炫目高光 */
-
-    /* 🌟 炫光核心 2：应用动画 */
-    animation:
-            glaring-border 1.5s linear infinite, /* 边框炫光呼吸 */
-            flow-background 8s linear infinite;    /* 背景色彩缓慢流动 */
-}
-
-/* ==================== 炫光动态关键帧 Keyframes ==================== */
-
-/* 1. 边框炫光呼吸：让边框颜色和外发光像激光一样呼吸闪烁 */
-@keyframes glaring-border {
-    0% {
-        border-color: rgba(0, 255, 255, 0.8); /* 赛博蓝 */
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    .grid-item {
+        flex: 1;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
-    50% {
-        border-color: rgba(255, 0, 127, 0.8); /* 霓虹玫红 */
-        /* 呼吸到最亮点 */
-        box-shadow: 0 0 30px rgba(255, 0, 127, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.9);
+    .name {
+        background: linear-gradient(rgba(20, 20, 20, 0.2), rgba(20, 20, 20, 0.2)),
+        rgba(255, 255, 255, 0.1);
+
+        color: #ffffff;
+        padding: 6px 22px;
+        font-size: 24px; font-weight: 600;
+
+        /* 并在滤镜中同时加入 contrast(对比度) 和 brightness(亮度) 修正 */
+        backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+        -webkit-backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
     }
-    100% {
-        border-color: rgba(0, 255, 255, 0.8); /* 回到赛博蓝 */
-        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+}
+.grid-item {
+    .portrait {
+        /*background-color: #ff0; !* 作为图片加载失败或未加载时的兜底背景色 *!*/
+        height: 350px;
+        position: relative;
+        /* 核心逻辑：图片等比缩放填满容器，绝不拉伸 */
+        background-repeat: no-repeat;
+        /* 1. 🌟 默认状态：完全变成灰色（100% 灰度） */
+        filter: grayscale(90%);
+
+        /* 2. 🌟 让灰度变化、淡入以及其他缩放属性一起享受极其丝滑的过渡效果 */
+        /*transition:*/
+        /*        filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),*/
+        /*        background-image 0.5s ease-in-out,*/
+        /*        opacity 0.5s ease-in-out;*/
+
+        .name {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            font-size: 30px; font-weight: bold;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+    }
+    .countdown {
+        height: 50px;
+        padding: 0 30px;
+        background-color: #000;
+        display: flex; align-items: center; justify-content: space-between;
+        font-size: 22px; font-weight: bold;
+        color: #fff;
+        > div { display: flex; align-items: center; justify-content: space-between; }
+        .sec-container { width: 60px; }
+        .per-container { width: 55px; }
     }
 }
 
-/* 2. 背景色彩流动：让高饱和度的渐变色在胶囊内部缓慢流淌 */
-@keyframes flow-background {
-    0% { background-position: 0% 50%; }
-    100% { background-position: 400% 50%; } /* 横向滚动整个渐变带 */
-}
-
-
-
-.grid-item .portrait {
-    /*background-color: #ff0; !* 作为图片加载失败或未加载时的兜底背景色 *!*/
-    height: 350px;
-    position: relative;
-    /* 核心逻辑：图片等比缩放填满容器，绝不拉伸 */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    /* 1. 🌟 默认状态：完全变成灰色（100% 灰度） */
-    filter: grayscale(90%);
-
-    /* 2. 🌟 让灰度变化、淡入以及其他缩放属性一起享受极其丝滑的过渡效果 */
-    /*transition:*/
-    /*        filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),*/
-    /*        background-image 0.5s ease-in-out,*/
-    /*        opacity 0.5s ease-in-out;*/
-
-    /*opacity: 0;*/
-}
-/* 🌟 当加载完成时（你之前做的淡入类名） */
-.grid-item .portrait.loaded {
-    opacity: 1;
-}
-/* 2. 轻微悬浮律动：模仿舞台卡片浮动，Y轴微调 3 像素，极具动感 */
-@keyframes floating {
-    0% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-3px); /* 向上微微悬浮 */
-    }
-    100% {
-        transform: translateY(0px);
-    }
-}
-@keyframes active-glow {
-    0% {
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3),
-        0 0 15px rgba(29, 185, 84, 0.2); /* 绿色微光 */
-    }
-    100% {
-        box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4),
-        0 0 30px rgba(29, 185, 84, 0.7); /* 强力绿光舞台焦点 */
-    }
-}
-.grid-item .portrait .name {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    font-size: 30px; font-weight: bold;
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-.grid-item .countdown {
-    height: 50px;
-    padding: 0 30px;
-    background-color: #000;
-    display: flex; align-items: center;
-    justify-content: space-between;
-    font-size: 22px; font-weight: bold;
-    color: #fff;
-}
-.countdown > div {
-    display: flex; align-items: center;
-    justify-content: space-between;
-}
-.countdown .sec-container {
-    width: 60px;
-}
-.countdown .per-container {
-    width: 55px;
-}
-.countdown .sec {
-}
-.countdown .per {
-}
 /* 歌词主容器 */
 .rolling-lyrics {
     position: absolute;
     top: 45%;
     width: 100%;
-    height: 500px; /* 控制可视区域高度，假设每行80px，正好显示3行 */
+    height: 500px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    /* 上下边缘模糊渐隐效果 */
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
     mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+
+    /* 单行歌词节点 */
+    .lyric-line {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        display: flex; flex-direction: column; align-items: center;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+        opacity 0.2s ease,
+        scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+
+        .lyric-text {
+            width: fit-content;
+            &.kr { font-size: 35px; font-weight: 550; }
+            &.ch { font-size: 35px; font-weight: 550; }
+
+            /* 默认文本流向 */
+            direction: ltr;
+
+            /* 🌟 1. 如果是右到左语言，改变文本流向 */
+            &:has(.lyric-word) {
+                /* 配合下面 .rtl-line 样式使用 */
+            }
+
+            .lyric-word {
+                display: inline-block;
+                color: var(--word-color);
+                white-space: pre;
+            }
+        }
+
+        /* 🌟 2. 正常情况：居中激活状态（从左到右 LTR） */
+        &.is-center {
+            scale: 1.2;
+            .lyric-word {
+                background: linear-gradient(to right, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        /* 🌟 3. 特殊情况：居中激活 + 右到左语种（从右到左 RTL） */
+        /* 通过将 &（代表.lyric-line）与 .rtl-line 结合，确保权重绝对对齐 */
+        &.rtl-line {
+            .lyric-text {
+                direction: rtl; /* 改变文字排版顺序 */
+            }
+            &.is-center {
+                .lyric-word {
+                    /* 反向渐变 */
+                    background: linear-gradient(to left, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent; /* 补齐丢失的透明色 */
+                }
+            }
+        }
+    }
 }
 
-/* 单行歌词节点 (绝对定位) */
-.lyric-line {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /*gap: 4px;*/
-    /* 核心：极其丝滑的动画过渡 */
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.2s ease,
-    scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    opacity: 0;
-    pointer-events: none;
-}
-/* 歌词文字与卡拉OK效果 */
-.lyric-text {
-    width: fit-content;
-}
-.lyric-text.kr { font-size: 35px; font-weight: 550; }
-.lyric-text.ch { font-size: 35px; font-weight: 550; }
-
-/* 正在演唱的中间行高亮放大 */
-.lyric-line.is-center {
-    scale: 1.2;
-}
-/* 🌟 核心：高亮效果绑定在单独的字上 */
-.lyric-word {
-    display: inline-block; /* 必须是 inline-block，否则 width: fit-content 和渐变无法生效 */
-    /*font-weight: 700;*/
-    color: var(--word-color);
-    /* 允许词与词之间有自然的间距 */
-    white-space: pre;
-}
-
-/* 正在演唱的中间行高亮放大 */
-.lyric-line.is-center .lyric-word {
-    background: linear-gradient(to right, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-/* 🌟 1. 改变整行文本流向，使其从右到左排列（符合阿拉伯语阅读习惯） */
-.rtl-line .lyric-text {
-    direction: rtl;
-}
-/* 居中激活状态的高亮 */
-.rtl-line.is-center .lyric-word {
-    background: linear-gradient(to left, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
-    -webkit-background-clip: text;
-}
 /* 🌟 新增：绝对定位的边框画布 */
 .border-glow-svg {
     position: absolute;
@@ -909,22 +832,21 @@ body {
     /* 这样 SVG 原本默认的“左上角”会直接倒转到“右下角”，且延伸方向完美保持顺时针 */
     transform: rotate(180deg);
     transform-origin: center;
-}
-
-/* 🌟 新增：白底矩形基础样式 */
-.border-bg-rect {
-    fill: transparent;
-    stroke: transparent;
-    stroke-width: 6px; /* 保持跟彩色线条一样粗 */
-    vector-effect: non-scaling-stroke;
-}
-/* 🌟 新增：高亮矩形基础属性 */
-.border-glow-rect {
-    fill: transparent;
-    stroke: transparent; /* 默认隐藏 */
-    stroke-width: 8px;   /* 边框粗细，可自行调整 */
-    /* 核心：确保缩放时线宽不发生拉伸变形 */
-    vector-effect: non-scaling-stroke;
+    /* 🌟 新增：白底矩形基础样式 */
+    .border-bg-rect {
+        fill: transparent;
+        stroke: transparent;
+        stroke-width: 6px; /* 保持跟彩色线条一样粗 */
+        vector-effect: non-scaling-stroke;
+    }
+    /* 🌟 新增：高亮矩形基础属性 */
+    .border-glow-rect {
+        fill: transparent;
+        stroke: transparent; /* 默认隐藏 */
+        stroke-width: 8px;   /* 边框粗细，可自行调整 */
+        /* 核心：确保缩放时线宽不发生拉伸变形 */
+        vector-effect: non-scaling-stroke;
+    }
 }
 </style>
 </html>
