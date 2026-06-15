@@ -537,8 +537,8 @@ const renderLyrics = (current) => {
             }
 
             // 统一应用计算后的排版样式
-            node.style.transform = `translateY(${targetY}px)`;
             node.style.opacity = targetOpacity;
+            if (targetOpacity > 0) node.style.transform = `translateY(${targetY}px)`;
             node.classList.toggle('is-center', offset === 0);
         });
 
