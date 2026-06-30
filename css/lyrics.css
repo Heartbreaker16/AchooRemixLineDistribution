@@ -1,0 +1,76 @@
+#lyrics-container {
+    position: absolute;
+    top: 42.5%;
+    width: 100%;
+    height: 630px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+    /*background: #ff0;*/
+    &.animate-out {
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    /* 单行歌词节点 */
+    .lyric-line {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        display: flex; flex-direction: column; align-items: center;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+        opacity 0.2s ease,
+        scale 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        opacity: 0;
+        pointer-events: none;
+
+        .lyric-text {
+            width: fit-content;
+            &.kr { font-size: 45px; font-weight: 550; }
+            &.ch { font-size: 45px; font-weight: 550; line-height: 1; }
+
+            /* 默认文本流向 */
+            direction: ltr;
+
+            /* 🌟 1. 如果是右到左语言，改变文本流向 */
+            &:has(.lyric-word) {
+                /* 配合下面 .rtl-line 样式使用 */
+            }
+
+            .lyric-word {
+                display: inline-block;
+                color: var(--word-color);
+                white-space: pre;
+            }
+        }
+
+        /* 🌟 2. 正常情况：居中激活状态（从左到右 LTR） */
+        &.is-center {
+            scale: 1.2;
+            .lyric-word {
+                background: linear-gradient(to right, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+
+        /* 🌟 3. 特殊情况：居中激活 + 右到左语种（从右到左 RTL） */
+        /* 通过将 &（代表.lyric-line）与 .rtl-line 结合，确保权重绝对对齐 */
+        &.rtl-line {
+            .lyric-text {
+                direction: rtl; /* 改变文字排版顺序 */
+            }
+            &.is-center {
+                .lyric-word {
+                    /* 反向渐变 */
+                    background: linear-gradient(to left, var(--word-color) var(--wp, 0%), rgba(0, 0, 0, 0.2) var(--wp, 0%));
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent; /* 补齐丢失的透明色 */
+                }
+            }
+        }
+    }
+}

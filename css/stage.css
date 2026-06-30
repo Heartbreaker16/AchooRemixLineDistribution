@@ -1,0 +1,159 @@
+#stage {
+    width: 100%;
+    position: absolute; top: 0;
+    background-color: #000;
+    opacity: 0;
+    transition: opacity 1s;
+    &.animate-in {
+        display: flex;
+        opacity: 1;
+    }
+    &.animate-out {
+        opacity: 0;
+        transition: opacity 1s;
+    }
+    .grid-item {
+        flex: 1;
+        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        .portrait {
+            /*background-color: #ff0; !* 作为图片加载失败或未加载时的兜底背景色 *!*/
+            height: 430px;
+            position: relative;
+            /* 核心逻辑：图片等比缩放填满容器，绝不拉伸 */
+            background-repeat: no-repeat;
+            /* 1. 🌟 默认状态：完全变成灰色（100% 灰度） */
+            filter: grayscale(90%);
+
+            /* 2. 🌟 让灰度变化、淡入以及其他缩放属性一起享受极其丝滑的过渡效果 */
+            /*transition:*/
+            /*        filter 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),*/
+            /*        background-image 0.5s ease-in-out,*/
+            /*        opacity 0.5s ease-in-out;*/
+        }
+        .countdown {
+            height: 50px;
+            padding: 0 25px;
+            /*background-color: #000;*/
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 28px; font-weight: bold;
+            color: #fff;
+            > div { display: flex; align-items: center; justify-content: space-between; }
+            .sec-container { width: 75px; }
+            .per-container { width: 70px; }
+        }
+    }
+    .name {
+        background: linear-gradient(rgba(20, 20, 20, 0.2), rgba(20, 20, 20, 0.2)),
+        rgba(255, 255, 255, 0.1);
+
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        color: #ffffff;
+        padding: 5px 20px;
+        font-size: 32px; font-weight: 600;
+
+        /* 并在滤镜中同时加入 contrast(对比度) 和 brightness(亮度) 修正 */
+        backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+        -webkit-backdrop-filter: blur(12px) brightness(0.85) contrast(1.1);
+
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+
+    .active .name {
+        /* 文字阴影稍微加强一点，保证在极炫背景下的可读性 */
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+
+        /* 2. 【核心滤镜 - 保持毛玻璃感，但去除压暗，恢复明亮】 */
+        backdrop-filter: blur(12px) contrast(1.2); /* 去除了 brightness(0.85)，让背景透出来 */
+        -webkit-backdrop-filter: blur(12px) contrast(1.2);
+
+        /* 3. 【醒目色彩 - 引入高饱和度、明亮的霓虹渐变底色】 */
+        /* 使用 400% 的宽度是为了给后面的背景流色动画留出空间 */
+        background: linear-gradient(110deg,
+        rgba(29, 185, 84, 0.6) 0%,   /* Spotify绿 */
+        rgba(0, 255, 255, 0.5) 25%,  /* 赛博蓝 */
+        rgba(255, 0, 127, 0.5) 50%,  /* 霓虹玫红 */
+        rgba(0, 255, 255, 0.5) 75%,  /* 赛博蓝 */
+        rgba(29, 185, 84, 0.6) 100%  /* 循环回绿色 */
+        );
+        background-size: 400% 100%; /* 放大背景以便流动 */
+
+        /* 4. 【炫光动态 - 边框追光与背景流色动画统一触发】 */
+        /* 1px 细边框作为追光的载体 */
+        border: 1px solid transparent;
+
+        /* 🌟 炫光核心 1：复合阴影
+           第一层：霓虹外发光 (Glow)
+           第二层：极其明亮的内高光 (边框炫光感)
+        */
+        box-shadow:
+                0 0 20px rgba(0, 255, 255, 0.5), /* 整体霓虹氛围 */
+                inset 0 0 12px rgba(255, 255, 255, 0.6); /* 内部炫目高光 */
+
+        /* 🌟 炫光核心 2：应用动画 */
+        animation:
+                glaring-border 1.5s linear infinite, /* 边框炫光呼吸 */
+                flow-background 8s linear infinite;    /* 背景色彩缓慢流动 */
+    }
+}
+/* ==================== 炫光动态关键帧 Keyframes ==================== */
+
+/* 1. 边框炫光呼吸：让边框颜色和外发光像激光一样呼吸闪烁 */
+@keyframes glaring-border {
+    0% {
+        border-color: rgba(0, 255, 255, 0.8); /* 赛博蓝 */
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    50% {
+        border-color: rgba(255, 0, 127, 0.8); /* 霓虹玫红 */
+        /* 呼吸到最亮点 */
+        box-shadow: 0 0 30px rgba(255, 0, 127, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.9);
+    }
+    100% {
+        border-color: rgba(0, 255, 255, 0.8); /* 回到赛博蓝 */
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* 2. 背景色彩流动：让高饱和度的渐变色在胶囊内部缓慢流淌 */
+@keyframes flow-background {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 400% 50%; } /* 横向滚动整个渐变带 */
+}
+
+/* 🌟 新增：绝对定位的边框画布 */
+.border-glow-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* 确保不影响任何原有的点击事件 */
+    z-index: 10;
+    /* 🌟 新增：整体旋转 180 度 */
+    /* 这样 SVG 原本默认的“左上角”会直接倒转到“右下角”，且延伸方向完美保持顺时针 */
+    transform: rotate(180deg);
+    transform-origin: center;
+    /* 🌟 新增：白底矩形基础样式 */
+    .border-bg-rect {
+        fill: transparent;
+        stroke: transparent;
+        stroke-width: 6px; /* 保持跟彩色线条一样粗 */
+        vector-effect: non-scaling-stroke;
+    }
+    /* 🌟 新增：高亮矩形基础属性 */
+    .border-glow-rect {
+        fill: transparent;
+        stroke: transparent; /* 默认隐藏 */
+        stroke-width: 8px;   /* 边框粗细，可自行调整 */
+        /* 核心：确保缩放时线宽不发生拉伸变形 */
+        vector-effect: non-scaling-stroke;
+    }
+}

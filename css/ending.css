@@ -1,0 +1,208 @@
+#line-distribution {
+    position: absolute; /* 🌟 关键 1：开启绝对定位结界，作为内层绝对定位的坐标基准 */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center; /* 确保中间的饼图永远死死居中，不被任何人挤压 */
+    align-items: center;
+    /*z-index: -1;*/
+
+    /*&.animate-in {*/
+    /*    opacity: 1;*/
+    /*    transition: opacity 1s;*/
+    /*}*/
+
+    .artist-tags {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%); /* 垂直居中对齐饼图 */
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        z-index: 10;
+        &:first-child {
+            left: 10px;
+        }
+        &.fake, &.real {
+            left: 10px;
+        }
+        &:last-child {
+            right: 10px;
+        }
+    }
+    #pie-chart {
+        width: 70%;
+        height: 96vh;
+        padding-left: 50px;
+    }
+}
+
+.artist-ending-tag {
+    display: inline-flex;
+    align-items: center;
+    position: relative; /* 为悬浮的时长和胶囊提供锚点 */
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 50px;
+    color: #eeeeee;
+
+    /* 隐形动力胶囊：它现在会通过动画改变自己的 left 和 right 来变形 */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0; bottom: 0; left: 0; right: 0;
+        z-index: -1;
+        background: var(--artist-color);
+        /*box-shadow: 0 2px 4px var(--artist-color), 0 3px 10px var(--artist-color);*/
+        border-radius: 50px;
+        /*backdrop-filter: blur(8px);*/
+    }
+
+    .avatar-container {
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        .avatar {
+            height: 60px; width: 60px;
+            border-radius: 50%;
+        }
+    }
+    /* 🌟 时长被完全抽离（Absolute），悬浮在空气中生长，绝对不影响内部宽度！ */
+    .text-area {
+        font-size: 24px; font-weight: 600; white-space: nowrap; z-index: 2;
+        opacity: 0; overflow: hidden; width: 0;
+        margin: 0; padding: 0; box-sizing: content-box;
+        filter: brightness(0.9);
+        display: flex; align-items: center;
+        gap: 12px;
+        position: absolute; /* 🌟 核心魔法：时长的展开不占任何物理体积 */
+        top: 0; bottom: 0;
+        justify-content: space-between;
+        .duration-text { opacity: 0; }
+
+    }
+
+    &.animate-in {
+        opacity: 1;
+        .duration-text {
+            transition: opacity 0.3s ease calc(2s + var(--delay, 0ms));
+            opacity: 1;
+        }
+    }
+
+    /* ==================== 🎭 左侧（向左右两侧双向爆开）==================== */
+    .artist-tags.real &, .artist-tags.fake & {
+        justify-content: flex-start;
+        .avatar-container { order: 2; }
+
+        /* 时长挂载在头像最右侧之外 */
+        .text-area {
+            left: 100%;
+            /* 🌟 1. 彻底定死物理尺寸，坚决不准做动画 */
+            width: var(--target-width);
+            padding-right: 16px;
+            margin-left: 8px;
+            /* 🌟 2. 初始状态：从右侧 100% 往左裁切，完全隐藏内容 */
+            clip-path: inset(0 100% 0 0);
+            transform: translateX(-15px);
+        }
+
+        /* 🌟 核心修改：把最终的物理长度死死焊住，绝对不准用动画改变 right！ */
+        &::before {
+            right: calc(0px - var(--target-width) - 24px);
+            /* 初始状态：总宽度是 100%，我们从右往左裁切，只保留最左侧 45px 的头像区域 */
+            /* round 50px 保证裁切边缘完美贴合你的圆角 */
+            clip-path: inset(0 calc(100% - 45px) 0 0 round 50px);
+        }
+
+        &.animate-in {
+            /* 2. 时长向右侧空气中悬浮生长，不产生任何推力 */
+            .text-area { animation: gpuRevealRight 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); }
+            /* 3. 胶囊背景向右拉伸去追赶时长的末端 */
+            &::before { animation: gpuCapsuleRight 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); }
+        }
+    }
+    .artist-tags.fake & {
+        justify-content: flex-start;
+        .avatar-container { order: 2; }
+        opacity: 0;
+
+        /* 时长挂载在头像最右侧之外 */
+        .text-area {
+            left: 100%;
+            /* 🌟 1. 彻底定死物理尺寸，坚决不准做动画 */
+            width: var(--target-width);
+            padding-right: 16px;
+            margin-left: 8px;
+            /* 🌟 2. 初始状态：从右侧 100% 往左裁切，完全隐藏内容 */
+            clip-path: inset(0 100% 0 0);
+            transform: translateX(-15px);
+        }
+
+        /* 🌟 核心修改：把最终的物理长度死死焊住，绝对不准用动画改变 right！ */
+        &::before {
+            right: calc(0px - var(--target-width) - 24px);
+            /* 初始状态：总宽度是 100%，我们从右往左裁切，只保留最左侧 45px 的头像区域 */
+            /* round 50px 保证裁切边缘完美贴合你的圆角 */
+            clip-path: inset(0 calc(100% - 45px) 0 0 round 50px);
+        }
+
+        &.animate-in {
+            /* 2. 时长向右侧空气中悬浮生长，不产生任何推力 */
+            .text-area { animation: gpuRevealRight 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); opacity: 0 !important; }
+            /* 3. 胶囊背景向右拉伸去追赶时长的末端 */
+            &::before { animation: gpuCapsuleRight 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); opacity: 0 !important; }
+        }
+    }
+
+    /* ==================== 🎭 右侧（向左右两侧双向爆开）==================== */
+    .artist-tags:last-child & {
+        justify-content: flex-end;
+        .avatar-container { order: 1; }
+
+        /* 时长挂载在头像最左侧之外 */
+        .text-area {
+            right: 100%;
+            /* 🌟 1. 彻底定死物理尺寸 */
+            width: var(--target-width);
+            padding-left: 16px;
+            margin-right: 8px;
+            /* 🌟 2. 初始状态：从左侧 100% 往右裁切，完全隐藏 */
+            clip-path: inset(0 0 0 100%);
+            transform: translateX(15px);
+        }
+        /* 🌟 核心修改：把左侧的最终延展长度焊死！ */
+        &::before {
+            left: calc(0px - var(--target-width) - 24px);
+            /* 初始状态：只保留最右侧 45px 的头像区域，其余的裁掉 */
+            clip-path: inset(0 0 0 calc(100% - 45px) round 50px);
+        }
+        &.animate-in {
+            .text-area { animation: gpuRevealLeft 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); }
+            &::before { animation: gpuCapsuleLeft 4s cubic-bezier(0.16, 1, 0.3, 1) forwards calc(var(--delay, 0ms)); }
+        }
+    }
+}
+
+/* ==================== 🚀 独立关键帧（严格计算，0 位移偏差）==================== */
+@keyframes gpuRevealRight {
+    0% { opacity: 0; clip-path: inset(0 100% 0 0); transform: translateX(-15px); }
+    100% { opacity: 1; clip-path: inset(0 0 0 0); transform: translateX(0); }
+}
+
+@keyframes gpuRevealLeft {
+    0% { opacity: 0; clip-path: inset(0 0 0 100%); transform: translateX(15px); }
+    100% { opacity: 1; clip-path: inset(0 0 0 0); transform: translateX(0); }
+}
+/* 左侧标签的胶囊：从只露 45px 头像，向右侧平滑展开 */
+@keyframes gpuCapsuleRight {
+    0% { clip-path: inset(0 calc(100% - 45px) 0 0 round 50px); }
+    100% { clip-path: inset(0 0 0 0 round 50px); } /* 完全不裁切，露出全部身段 */
+}
+
+/* 右侧标签的胶囊：从只露 45px 头像，向左侧平滑展开 */
+@keyframes gpuCapsuleLeft {
+    0% { clip-path: inset(0 0 0 calc(100% - 45px) round 50px); }
+    100% { clip-path: inset(0 0 0 0 round 50px); } /* 完全不裁切 */
+}
