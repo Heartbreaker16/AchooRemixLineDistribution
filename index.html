@@ -33,6 +33,7 @@
 <audio id="bg-master" src="music/Groovy%20Room%20-%20Achoo%20(Remix).mp3" muted preload="auto"></audio>
 <!--<audio id="bg-master" src="music/Groovy%20Room%20-%20Achoo_1.mp3" muted preload="auto"></audio>-->
 </body>
+<script src="./js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
 <script>
 const convertTime = (timeStr) => {
@@ -368,8 +369,10 @@ const songInfo = [
     else if (_.id === 'Performers') _.staff = [...getAllPerformersName()];
     // _.s = convertTime(_.s)
     // _.e = convertTime(_.e)
-    _.title = _.enTitle
-    _.text = _.enText || _.text
+    if (!window.GLOBAL_CONFIG.CHINESE) {
+        _.title = _.enTitle
+        _.text = _.enText || _.text
+    }
     return _;
 })
 
@@ -550,8 +553,8 @@ let lyricNodes
 const initLyrics = async () => {
     try {
         const [response1, response2] = await Promise.all([
-            fetch('lyrics/kr-words-en.qrc'),  // 韩文 QRC 混合文本
-            fetch('lyrics/v4.md')   // 中文 纯文本
+            fetch(`lyrics/kr-words${window.GLOBAL_CONFIG.CHINESE ? '' : '-en'}.qrc`),  // 韩文 QRC 混合文本
+            fetch(`lyrics/${window.GLOBAL_CONFIG.CHINESE ? 'v3' : 'v4'}.md`)   // 中文 纯文本
         ]);
 
         if (!response1.ok || !response2.ok) {
@@ -881,8 +884,6 @@ const preloadAllImages = async () => {
     console.log(`🚀 所有 ${uniqueImages.length} 张舞台图片预加载并【强制解码】完毕，不再闪烁！`);
 };
 
-const DEBUG = 0;
-const DEBUG_START_TIME_STRING = "11:19.000"
 const toCurrentTimeStr = timeString => {
     const t = timeString.split(':');
     const minutes = parseFloat(t[0]);
@@ -890,12 +891,12 @@ const toCurrentTimeStr = timeString => {
     // 直接数学相加返回纯秒数数字
     return (minutes * 60) + seconds;
 }
-const DEBUG_START_TIME = toCurrentTimeStr(DEBUG_START_TIME_STRING);
+const DEBUG_START_TIME = toCurrentTimeStr(window.GLOBAL_CONFIG.DEBUG_START_TIME_STRING);
 const turnOn = () => {
     if (imagesLoaded) {
         Elements.audio.muted = false;
         Elements.audio.volume = 0.2;
-        if (DEBUG) {
+        if (window.GLOBAL_CONFIG.DEBUG) {
             Elements.stage.classList.add('animate-in')
             // 🌟 新增这行：设置你想跳转的调试时间（单位：秒，支持小数）
             Elements.audio.currentTime = DEBUG_START_TIME;           // 比如直接跳到 20.5 秒
@@ -907,7 +908,7 @@ const turnOn = () => {
             container.style.backgroundColor = "#fff";
         });
         Elements.audio.play()
-        if (DEBUG) requestAnimationFrame(animationLoop);
+        if (window.GLOBAL_CONFIG.DEBUG) requestAnimationFrame(animationLoop);
         else generateSongInfo();
     }
 }
@@ -918,12 +919,19 @@ const turnOn1 = async () => {
     const { chart, option } = initPie();
     Elements.audio.play();
 }
+const appendDynamicStyle = () => {
+    const dynamicLink = document.createElement('link');
+    dynamicLink.rel = 'stylesheet';
+    dynamicLink.href = `./css/i18n/${window.GLOBAL_CONFIG.CHINESE ? 'zh' : 'en'}.css`;
+    document.head.appendChild(dynamicLink);
+}
 document.addEventListener('DOMContentLoaded', async () => {
+    appendDynamicStyle();
     generateStageSlots();
     await Promise.all([initLyrics(), preloadAllImages()]);
     imagesLoaded = true;
     // 👉 补充这一行：传入你指定的毫秒数 (上面秒数 * 1000，比如 65.5秒 = 65500)
-    DEBUG && renderLyrics(DEBUG_START_TIME * 1000);
+    window.GLOBAL_CONFIG.DEBUG && renderLyrics(DEBUG_START_TIME * 1000);
 });
 
 </script>

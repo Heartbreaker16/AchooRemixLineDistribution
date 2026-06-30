@@ -2,12 +2,6 @@
     position: absolute; top: 0; left: 0;
     display: flex;
     height: 100%; width: 100%;
-    /*for chinese*/
-    /*padding: 40px; gap: 40px;*/
-
-    /*for english*/
-    padding: 10px 30px; gap: 40px;
-
     box-sizing: border-box;
 
     #left-info {
@@ -92,7 +86,6 @@
         flex-direction: column;
         flex: 1;
         align-items: flex-start; /* 🌟 确保歌名和下方的网格大阵整体靠最左对齐 */
-        gap: 20px; /*chinese 30px english 20px*/
     }
 
     /* 🌟 核心重构：利用 CSS Grid 让所有行的标题和内容强行吃同一套列宽 */

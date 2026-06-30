@@ -1,0 +1,8 @@
+#song-info {
+    padding: 40px;
+    gap: 40px;
+
+    #right-info {
+        gap: 30px;
+    }
+}

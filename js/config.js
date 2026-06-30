@@ -1,0 +1,5 @@
+window.GLOBAL_CONFIG = {
+    CHINESE: 0,
+    DEBUG: 0,
+    DEBUG_START_TIME_STRING: "11:19:000"
+};
